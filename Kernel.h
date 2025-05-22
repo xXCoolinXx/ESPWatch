@@ -39,6 +39,8 @@ class Kernel {
   // Previous angles for analog clock hands
   double prev_a_hour = -1.0;
   double prev_a_min = -1.0;
+
+  unsigned long deltaTime = 0;
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
   ClockDaemon* _clock;
@@ -66,4 +68,6 @@ class Kernel {
   void clearViewBox(uint16_t bg = TFT_BLACK); //Clear the square where programs besides the analog clock run
 
   void drawViewBox(uint16_t border=TFT_WHITE);
+
+  double getDeltaTime();
 };

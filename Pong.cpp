@@ -5,6 +5,11 @@
 Pong::Pong(Kernel* kernel) : App(kernel) {
   reset_ball();  
   this->kernel = kernel;
+
+
+  kernel->display.setTextColor(TFT_WHITE, TFT_BLACK, true);
+  kernel->display.setTextDatum(MC_DATUM);
+  kernel->loadSmallFont();
 }
 
 String Pong::get_name() {
@@ -35,15 +40,18 @@ void Pong::run_code(double x, double y, bool special) {
   kernel->display.fillCircle(ball_last.x + BALL_DIAMETER/2, ball_last.y + BALL_DIAMETER/2, BALL_DIAMETER/2, BLACK);
   kernel->display.fillCircle(ball     .x + BALL_DIAMETER/2, ball     .y + BALL_DIAMETER/2, BALL_DIAMETER/2, WHITE);
 
-  kernel->display.fillRect((SCREEN_WIDTH - 2) / 2, 0, 2, SCREEN_HEIGHT, WHITE); //Center line
+  kernel->display.fillRect((screen_width - 2) / 2, top_vb, 2, viewbox_wh, WHITE); //Center line
+  
+  this->printScores();
+}
 
-  kernel->display.setCursor(COMP_SCORE_X, SCORE_Y);
-  kernel->display.setTextColor(RED);
-  print2(comp_score, &kernel->display);
+void Pong::printScores() {
+  kernel->display.setTextColor(TFT_RED, TFT_BLACK, true);
+  kernel->display.drawString(format0(this->comp_score), center_x - viewbox_wh / 4, top_vb + SCORE_Y);
 
-  kernel->display.setCursor(USER_SCORE_X, SCORE_Y);
-  kernel->display.setTextColor(BLUE);
-  print2(user_score, &kernel->display);
+  // kernel->display.setCursor(USER_SCORE_X, SCORE_Y);
+  kernel->display.setTextColor(TFT_BLUE, TFT_BLACK, true);
+  kernel->display.drawString(format0(this->user_score), center_x + viewbox_wh / 4, top_vb + SCORE_Y);
 }
 
 RectDouble Pong::user_move(double x, double y) {
@@ -92,13 +100,11 @@ RectDouble Pong::ball_move() {
   //Check paddles
   if(not check_collisions()) 
   {
-    if(ball.x == 0.00) {
+    if(ball.x <= left_vb) {
       user_score++;
-      clear_chars(USER_SCORE_X, SCORE_Y, 2, &kernel->display);
       reset_ball();
-    } else if (ball.x == SCREEN_WIDTH - BALL_DIAMETER) {
+    } else if (ball.x >= right_vb - BALL_DIAMETER) {
       comp_score++;
-      clear_chars(COMP_SCORE_X, SCORE_Y, 2, &kernel->display);
       reset_ball();
     }
   }

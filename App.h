@@ -29,6 +29,7 @@ class Kernel;
 
 class newApp : public App
 {
+  Kernel* kernel;
   public:
   newApp(Kernel* kernel);
   void run_code(double x, double y, bool special, Kernel* kernel);
@@ -38,7 +39,9 @@ class newApp : public App
 #include "newApp.h"
 #include "Kernel.h"
 
-newApp::newApp(Kernel* kernel) : App(kernel) {}
+newApp::newApp(Kernel* kernel) : App(kernel) {
+  this->kernel = kernel;
+}
 
 void newApp::run_code(double x, double y, bool special, Kernel* kernel) {}
 

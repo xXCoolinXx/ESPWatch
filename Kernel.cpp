@@ -111,11 +111,11 @@ void Kernel::loopf() {
   lastSpecial = currentSpecial;
   checkBoggle();
 
-   long elapsed = millis() - t_0;
+  this->deltaTime = millis() - t_0;
   if (frame_times.size() == frame_count) {
     frame_times.pop_front();
   }
-  frame_times.push_back(elapsed); 
+  frame_times.push_back(deltaTime); 
 }
 
 //Takes the last 10 frames to see the FPS
@@ -205,9 +205,13 @@ void Kernel::drawAnalog() {
 }
 
 void Kernel::clearViewBox(uint16_t bg) {
-  this->display.fillRect((screen_width - viewbox_wh)/2, (screen_height - viewbox_wh)/2, viewbox_wh, viewbox_wh, bg);
+  this->display.fillRect(left_vb, top_vb, viewbox_wh, viewbox_wh, bg);
 }
 
 void Kernel::drawViewBox(uint16_t border) {
-  this->display.drawRect((screen_width - viewbox_wh)/2, (screen_height - viewbox_wh)/2, viewbox_wh, viewbox_wh, border);
+  this->display.drawRect(left_vb, top_vb, viewbox_wh, viewbox_wh, border);
+}
+
+double Kernel::getDeltaTime() {
+  return double(this->deltaTime) / 60.0;
 }

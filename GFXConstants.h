@@ -8,7 +8,7 @@ const int r_minor = r - 5;
 const int r_cursor = r-20;
 const int cursor_w = 5;
 const int frame_count = 10;
-const int viewbox_wh = 125;
+const int viewbox_wh = 120;
 
 const unsigned short center_x = screen_width / 2;
 const unsigned short center_y = screen_height / 2;
