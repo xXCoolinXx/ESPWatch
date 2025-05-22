@@ -1,6 +1,8 @@
 #pragma once
 #include "Color.h"
 #include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <SPI.h>
 //#include "Kernel.h"
 
 class Kernel;
@@ -8,11 +10,15 @@ class Kernel;
 //Common framework for apps so that Kernel can call them easily
 //More akin to a Rust traits than a real class
 class App {
+  virtual void _setup_sprites();
   public:
   App(Kernel* kernel);
-  virtual void run_code(double x, double y, bool special, Kernel* kernel)=0;
-  virtual String get_name();
+  virtual void run_code(double x, double y, bool special)=0;
+  virtual String get_name() = 0;
 };
+
+// Utility function to make sprites easily
+void make_sprite(TFT_eSprite*& spr, TFT_eSPI* display, int width, int height, const uint16_t bitmap[]);
 
 //New app copy and paste
 

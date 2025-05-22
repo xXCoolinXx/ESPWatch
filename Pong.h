@@ -1,5 +1,6 @@
 #include "App.h"
 #include "Shapes.h"
+#include "GFXConstants.h"
 
 #define PAD_WIDTH      2
 #define PAD_HEIGHT    12
@@ -15,9 +16,9 @@ const double pi = 4 * atan(1.0);
 class Kernel;
 
 class Pong : public App {
-  RectDouble comp_pad{0, (SCREEN_HEIGHT - PAD_HEIGHT) / 2, PAD_WIDTH, PAD_HEIGHT};
-  RectDouble user_pad{SCREEN_WIDTH - PAD_WIDTH, (SCREEN_HEIGHT - PAD_HEIGHT) / 2, PAD_WIDTH, PAD_HEIGHT};
-  RectDouble ball{0, 0, BALL_DIAMETER, BALL_DIAMETER};
+  RectDouble comp_pad{(screen_width - viewbox_wh)/2 , (screen_height - PAD_HEIGHT) / 2, PAD_WIDTH, PAD_HEIGHT};
+  RectDouble user_pad{(screen_width + viewbox_wh)/2 - PAD_WIDTH, (screen_height - PAD_HEIGHT) / 2, PAD_WIDTH, PAD_HEIGHT};
+  RectDouble ball{screen_width/2, screen_height/2, BALL_DIAMETER, BALL_DIAMETER};
   
   const double ball_speed = 1.10;
   const double comp_speed = 0.75;
@@ -26,13 +27,14 @@ class Pong : public App {
   int user_score = 0;
   int comp_score = 0;
 
+  Kernel* kernel;
   public:
     Pong(Kernel* kernel);
-    void run_code(double x, double y, bool special, Kernel* kernel);
+    void run_code(double x, double y, bool special);
     String get_name();
-    RectDouble user_move(double x, double y, Kernel* kernel);
-    RectDouble comp_move(Kernel* kernel);
-    RectDouble ball_move(Kernel* kernel);
+    RectDouble user_move(double x, double y);
+    RectDouble comp_move();
+    RectDouble ball_move();
     void reset_ball();
     bool check_collisions();
     

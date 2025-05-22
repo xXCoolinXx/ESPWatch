@@ -125,30 +125,48 @@ short getWidth(AlarmEdit a) {
   }
 }
 
-Clock::Clock(Kernel* kernel) : App(kernel) {}
+Clock::Clock(Kernel* kernel) : App(kernel) {
+  this->kernel = kernel; // Save pointer to kernel
 
-void Clock::run_code(double x, double y, bool special, Kernel* kernel) {
-  update_selection(x, y, kernel);
-  checkSpecial(x, y, special, kernel);
+  this->_setup_sprites(); // Make timer and stopwatch sprites
+}
+
+Clock::~Clock() {
+  delete this->timer;
+  delete this->stopwatch;
+}
+
+void Clock::_setup_sprites() {
+  make_sprite(this->stopwatch, &(this->kernel->display), 15, 8, clock_bmp);
+  make_sprite(this->timer, &(this->kernel->display), 15, 8, timer_bmp);
+}
+
+void Clock::run_code(double x, double y, bool special) {
+  update_selection(x, y);
+  checkSpecial(x, y, special);
 
   kernel->display.fillRoundRect(0, current_selection, 7, 7, 1, WHITE);
 
   kernel->display.setCursor(0, 0);
   kernel->display.print("Clock");
 
-  kernel->display.drawRGBBitmap(10, Selection::STOPWATCH, clock_bmp, 15, 8);
+  // kernel->display.drawBitmap(10, Selection::STOPWATCH, clock_bmp, 15, 8); 
+  // kernel->display.drawBitmap(10, Selection::STOPWATCH, 15, 8, clock_bmp);
+  this->stopwatch->pushSprite(10, Selection::STOPWATCH);
+
   kernel->display.setCursor(40, Selection::STOPWATCH);
   tmElements_t sw = kernel->_clock->getStopwatchTime();
-  print_time(sw, &kernel->display);
+  print_time(sw, &kernel->display, 40, Selection::STOPWATCH);
   if (kernel->_clock->secondChanged() and kernel->_clock->stopwatchIsRunning())
-    _clearStopwatchArea(kernel);
-
-  kernel->display.drawRGBBitmap(10, Selection::TIMER, timer, 15, 8);
+    _clearStopwatchArea();
+  
+  // kernel->display.drawBitmap(10, Selection::TIMER, timer, 15, 8);
+  this->timer->pushSprite(10, Selection::TIMER);
   kernel->display.setCursor(40, Selection::TIMER);
   tmElements_t timer = kernel->_clock->getTimerTime();
-  print_time(timer, &kernel->display);
+  print_time(timer, &kernel->display, 10, Selection::TIMER);
   if (kernel->_clock->secondChanged() and kernel->_clock->timerRunning())
-    _clearTimerArea(kernel);
+    _clearTimerArea();
 
   AlarmStruct* a = kernel->_clock->getAlarm(alarm_number);
   kernel->display.setCursor(10, Selection::ALARMS);
@@ -166,12 +184,12 @@ void Clock::run_code(double x, double y, bool special, Kernel* kernel) {
     int wday = i - 4;
     AlarmEdit ae = static_cast<AlarmEdit>(i);
     if (a->Days.find(wday) != a->Days.end()) {
-      _underline(getX(ae), getY(ae) + 1, getWidth(ae), kernel, false);
+      _underline(getX(ae), getY(ae) + 1, getWidth(ae), false);
     }
   }
 }
 
-void Clock::update_selection(double x, double y, Kernel* kernel) {
+void Clock::update_selection(double x, double y) {
   if (edit == TimeSelection::NOT_EDITING and alarm_edit == NOT and not (abs(x) > 0.9 and (current_selection == Selection::TIMER or current_selection == ALARMS))) {
     just_moved_x = false;
     if (abs(y) > 0.6 && !just_moved_y) {
@@ -223,7 +241,7 @@ void Clock::update_selection(double x, double y, Kernel* kernel) {
             alarm_number %= NUM_ALARMS;
           }
           
-          _clearAlarmArea(kernel);
+          _clearAlarmArea();
           break;
         case SET:
           a->Set = !a->Set;
@@ -272,22 +290,22 @@ void Clock::update_selection(double x, double y, Kernel* kernel) {
   }
 }
 
-void Clock::_clearStopwatchArea(Kernel* kernel) {
+void Clock::_clearStopwatchArea() {
   kernel->display.fillRect(40, Selection::STOPWATCH, kernel->display.width(), 7, BLACK);
 }
 
-void Clock::_clearTimerArea(Kernel* kernel) {
+void Clock::_clearTimerArea() {
   kernel->display.fillRect(40, Selection::TIMER, kernel->display.width(), 9, BLACK);
 }
 
-void Clock::_clearAlarmArea(Kernel* kernel) {
+void Clock::_clearAlarmArea() {
   kernel->display.fillRect(X_SPACE, ALARMS, kernel->display.width(), CHAR_HEIGHT, BLACK);
   kernel->display.fillRect(X_SPACE + CHAR_SPACE_W, ALARMS + ROW_SPACE, kernel->display.width(), CHAR_HEIGHT, BLACK);
   //kernel->display.fillRect(X_SPACE + CHAR_SPACE_W, ALARMS + 2 * ROW_SPACE, kernel->display.width(), CHAR_HEIGHT, BLACK);
   kernel->display.drawFastHLine(0, ALARMS + 2 * ROW_SPACE + CHAR_HEIGHT + 2, kernel->display.width(), BLACK);
 }
 
-void Clock::_underline(short x, short y, short num_chars, Kernel* kernel, bool clear) {
+void Clock::_underline(short x, short y, short num_chars, bool clear) {
   if (clear) {
     kernel->display.drawFastHLine(0, 20 + CHAR_HEIGHT + 1, kernel->display.width(), BLACK);
     kernel->display.drawFastHLine(0, 30 + CHAR_HEIGHT + 1, kernel->display.width(), BLACK);
@@ -302,13 +320,13 @@ String Clock::get_name() {
   return String("Clock");
 }
 
-void Clock::checkSpecial(double x, double y, bool special, Kernel* kernel) {
+void Clock::checkSpecial(double x, double y, bool special) {
   switch (current_selection) {
     case Selection::STOPWATCH:
       if (special and not kernel->getLastSpecial()) {
         if (abs(x) > 0.7) {
           kernel->_clock->clearStopwatch();
-          _clearStopwatchArea(kernel);
+          _clearStopwatchArea();
         } else {
           kernel->_clock->toggleStopwatch();
         }
@@ -319,13 +337,13 @@ void Clock::checkSpecial(double x, double y, bool special, Kernel* kernel) {
         if (edit == NOT_EDITING) {
           if (abs(x) > 0.7) {
             kernel->_clock->clearTimer();
-            _clearTimerArea(kernel);
+            _clearTimerArea();
           } else {
             kernel->_clock->toggleTimer();
           }
         } else {
           edit = NOT_EDITING;
-          _clearTimerArea(kernel);
+          _clearTimerArea();
         }
       }
       break;

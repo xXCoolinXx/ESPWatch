@@ -2,13 +2,15 @@
 #include "Kernel.h"
 
 SnakeDir getdirFromJoystick(double x, double y) {
-  if(x > 0
+  if(x > 0) { return SNAKE_NONE; }
 }
 
-Snake::Snake(Kernel* kernel) : App(kernel) {}
+Snake::Snake(Kernel* kernel) : App(kernel) {
+  this->kernel = kernel;
+}
 
-void Snake::run_code(double x, double y, bool special, Kernel* kernel) {
-  kernel->display.print("SNAKE");  
+void Snake::run_code(double x, double y, bool special) {
+  this->kernel->display.print("SNAKE");  
 }
 
 String Snake::get_name() {

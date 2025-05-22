@@ -1,18 +1,21 @@
 #pragma once
-// #include <DS1307RTC.h>
+#define DS1307LIB_NOWIRE // Added to ensure DS1307 doesnt begin the wire for us // Doesn't work ...
+#include <DS1307RTC.h>
 #include <NTPClient.h>
 // change next line to use with another board/shield
 // #include <ESP8266WiFi.h>
 //#include <WiFi.h> // for WiFi shield
 //#include <WiFi101.h> // for WiFi 101 shield or MKR1000
 #include <WiFiUdp.h>
+#include <WiFi.h>
+
 #include <TimeLib.h>
 #include <TimeAlarms.h>
-// #include <FS.h>
-// #include <LittleFS.h>
+#include <FS.h>
+#include <LittleFS.h>
 #include <ArduinoJson.h>
 #include <bits/stdc++.h>
-#include <RTClib.h>
+// #include <RTClib.h>
 
 #define NUM_ALARMS 3
 #define ALARM_PATH "/alarms.json"
@@ -57,7 +60,7 @@ class ClockDaemon {
 
     AlarmStruct alarms[NUM_ALARMS];
 
-    RTC_DS1307 clock;
+    // RTC_DS1307 clock;
 
   public:
     //ClockDaemon();

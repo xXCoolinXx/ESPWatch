@@ -1,38 +1,44 @@
 #pragma once
 #include "App.h"
 #include "Shapes.h"
+#include <TFT_eSPI.h>
 
-#define APP_DIM 18
-#define OUTLINE_DIM 20
-#define APP_SPACING_X 9 //96 - 3 * OUTLINE_DIM / 4
-#define APP_SPACING_Y 4
-#define APP_START 12
-#define ROWS 2
-#define COLS 3
-
-//What no list comprehension do to a mf
-const RectInt app_rects[ROWS*COLS] = {
-   RectInt{APP_SPACING_X * (0 + 1) + OUTLINE_DIM * 0 + 1, APP_START + APP_SPACING_Y * (0 + 1) + OUTLINE_DIM*0 + 1, APP_DIM, APP_DIM},
-   RectInt{APP_SPACING_X * (1 + 1) + OUTLINE_DIM * 1 + 1, APP_START + APP_SPACING_Y * (0 + 1) + OUTLINE_DIM*0 + 1, APP_DIM, APP_DIM},
-   RectInt{APP_SPACING_X * (2 + 1) + OUTLINE_DIM * 2 + 1, APP_START + APP_SPACING_Y * (0 + 1) + OUTLINE_DIM*0 + 1, APP_DIM, APP_DIM},
-   RectInt{APP_SPACING_X * (0 + 1) + OUTLINE_DIM * 0 + 1, APP_START + APP_SPACING_Y * (1 + 1) + OUTLINE_DIM*1 + 1, APP_DIM, APP_DIM},
-   RectInt{APP_SPACING_X * (1 + 1) + OUTLINE_DIM * 1 + 1, APP_START + APP_SPACING_Y * (1 + 1) + OUTLINE_DIM*1 + 1, APP_DIM, APP_DIM},
-   RectInt{APP_SPACING_X * (2 + 1) + OUTLINE_DIM * 2 + 1, APP_START + APP_SPACING_Y * (1 + 1) + OUTLINE_DIM*1 + 1, APP_DIM, APP_DIM},
-};
+const int APP_DIM = 18;
+const int OUTLINE_DIM = APP_DIM + 2;
+const int OUTLINE_APP_DIF = (OUTLINE_DIM - APP_DIM)/2;
+const int APP_SPACING_X = 10; //96 - 3 * OUTLINE_DIM / 4
+const int APP_SPACING_Y = 10;
+const int ROWS = 3;
+const int COLS = 3;
 
 class Start : public App {
   private: 
-    RectDouble Cursor;
-    RectDouble lastCursor;
+    // RectDouble Cursor;
+    // RectDouble lastCursor;
+    Kernel* kernel;
+    double last_x = -10.0;
+    double last_y = -10.0;
+    bool showTime = true;
+    PointInt Cursor = PointInt{0, 0};
+
+    RectInt app_rects[ROWS][COLS];
+    void _setup_sprites();
+
+    // Apps
+    TFT_eSprite* pong = nullptr;
+    TFT_eSprite* snake = nullptr;
+
+    // TFT_eSprite* cursor = nullptr;
   public:
   Start(Kernel* kernel);
-  void run_code(double x, double y, bool special, Kernel* kernel);
+  ~Start();
+  void run_code(double x, double y, bool special);
   String get_name();
   
-  void display_time(Kernel* kernel);
-  void display_cursor(Kernel* kernel);
-  void displayApps(Kernel* kernel);
+  void display_time();
+  void display_cursor();
+  void displayApps();
   
-  void move_cursor(double x, double y, Kernel* kernel);
-  void checkPress(bool special, Kernel* kernel);
+  void move_cursor(double x, double y);
+  void checkPress(bool special);
 };

@@ -38,48 +38,30 @@ void ClockDaemon::sync() {
   // changed later with setTimeOffset() ). Additionaly you can specify the
   // update interval (in milliseconds, can be changed using setUpdateInterval() ).
   NTPClient timeClient(ntpUDP, -5*60*60);
-  
-  #ifdef SERIAL
-  Serial.begin(115200);
-  #endif
-  
-  WiFi.begin(ssid.c_str(), password.c_str());
 
   short timeout = 0;
-  while(WiFi.status() != WL_CONNECTED && timeout < 20) {
-    timeout++;
-    #ifdef SERIAL
-    Serial.print(".");
-    #endif
-    delay(500);
-  }
   if (WiFi.status() == WL_CONNECTED) {
     timeClient.begin();
     
     if (timeClient.update()) {    
-      breakTime(timeClient.getEpochTime(), tm);
-          
-      if(!RTC.write(tm)) {
-        #ifdef SERIAL
+      breakTime(timeClient.getEpochTime(), this->tm);
+      
+      if(!RTC.write(this->tm)) {
         Serial.println("Writing to RTC clock failed :_(");
-        #endif
       } else {
-        #ifdef SERIAL
         Serial.println("NTP time: " + timeClient.getFormattedTime());
-        #endif
       }
     }
     timeClient.end();
+  } else {
+    Serial.println("Failed to sync time: WiFi not connected.");
   }
 }
 
 void ClockDaemon::setupf() {
-  Wire.begin(32, 33);
-  this->rtc.begin();
-  
   sync();
 
-  setSyncProvider(this-0>rtc.now);
+  setSyncProvider(RTC.get);
 
   loadAlarms();
 

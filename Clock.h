@@ -1,6 +1,6 @@
 #pragma once
 #include "App.h"
-#include "Print.h"
+#include "MyPrint.h"
 
 #define ROW_SPACE 10
 #define NUM_ROWS 3
@@ -46,22 +46,28 @@ class Clock : public App {
   bool just_moved_y = false;
   Selection current_selection = Selection::STOPWATCH;
 
-  void _clearStopwatchArea(Kernel* kernel);
-  void _clearTimerArea(Kernel* kernel);
-  void _underline(short x, short y, short num_chars, Kernel* kernel, bool clear = true);
-  void _clearAlarmArea(Kernel* kernel);
+  void _clearStopwatchArea();
+  void _clearTimerArea();
+  void _underline(short x, short y, short num_chars, bool clear = true);
+  void _clearAlarmArea();
+  void _setup_sprites();
   //void _drawDOW(
 
   TimeSelection edit = TimeSelection::NOT_EDITING;
   AlarmEdit alarm_edit = NOT;
 
   int alarm_number = 0;
+
+  TFT_eSprite* stopwatch = nullptr;
+  TFT_eSprite* timer = nullptr;
+  Kernel* kernel;
   public:
   Clock(Kernel* kernel);
+  ~Clock();
 
-  void run_code(double x, double y, bool special, Kernel* kernel);
-  void update_selection(double x, double y, Kernel* kernel);
+  void run_code(double x, double y, bool special);
+  void update_selection(double x, double y);
   String get_name();
 
-  void checkSpecial(double x, double y, bool special, Kernel* kernel);
+  void checkSpecial(double x, double y, bool special);
 };

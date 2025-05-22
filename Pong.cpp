@@ -1,9 +1,10 @@
 #include "Pong.h"
 #include "Kernel.h"
-#include "Print.h"
+#include "MyPrint.h"
 
 Pong::Pong(Kernel* kernel) : App(kernel) {
   reset_ball();  
+  this->kernel = kernel;
 }
 
 String Pong::get_name() {
@@ -18,10 +19,12 @@ short randPlusOrMinus() {
   }
 }
 
-void Pong::run_code(double x, double y, bool special, Kernel* kernel) {
-  RectDouble user_last = user_move(x, y, kernel);
-  RectDouble comp_last = comp_move(kernel);
-  RectDouble ball_last = ball_move(kernel);
+void Pong::run_code(double x, double y, bool special) {
+  kernel->drawViewBox();
+
+  RectDouble user_last = user_move(x, y);
+  RectDouble comp_last = comp_move();
+  RectDouble ball_last = ball_move();
 
   kernel->display.fillRect(comp_last.x, comp_last.y, comp_last.width, comp_last.height, BLACK);
   kernel->display.fillRect(comp_pad .x, comp_pad .y, comp_pad .width, comp_pad .height, WHITE);
@@ -43,28 +46,33 @@ void Pong::run_code(double x, double y, bool special, Kernel* kernel) {
   print2(user_score, &kernel->display);
 }
 
-RectDouble Pong::user_move(double x, double y, Kernel* kernel) {
+RectDouble Pong::user_move(double x, double y) {
   RectDouble last = user_pad;
   
   double fps_ratio = 80.00 / kernel->get_fps(); 
-  user_pad.y = min(double(kernel->display.height() - user_pad.height), max(0.00, user_pad.y + fps_ratio * y));
+  // user_pad.y = min(, max(, ));
+
+  user_pad.y = constrain(user_pad.y + fps_ratio * y, double(top_vb), double(bottom_vb - user_pad.height));
 
   return last;
 }
 
-RectDouble Pong::comp_move(Kernel* kernel) {
+RectDouble Pong::comp_move() {
   RectDouble last = comp_pad;
 
   double dif = (ball.y - ball.height / 2) - (comp_pad.y - comp_pad.height / 2);
   double mov = comp_speed * abs(dif) / dif;
   double fps_ratio = 80.00 / kernel->get_fps(); 
 
-  comp_pad.y = min(double(kernel->display.height() - comp_pad.height), max(0.00, comp_pad.y + fps_ratio * mov));
+  // comp_pad.y = min(double(kernel->display.height() - comp_pad.height), max(0.00, comp_pad.y + fps_ratio * mov));
+
+  comp_pad.y = constrain(comp_pad.y + fps_ratio * mov, double(top_vb), double(bottom_vb - comp_pad.height));
+
 
   return last;
 }
 
-RectDouble Pong::ball_move(Kernel* kernel) {
+RectDouble Pong::ball_move() {
   RectDouble last = ball;
   
   double fps_ratio = 80.00 / kernel->get_fps(); 
@@ -72,10 +80,12 @@ RectDouble Pong::ball_move(Kernel* kernel) {
   //Move forward
   ball.x += ball_speed * fps_ratio * cos(ball_angle);
   ball.y += ball_speed * fps_ratio * sin(ball_angle); 
-  ball.x  = min(max(ball.x, 0.00), double(SCREEN_WIDTH  - BALL_DIAMETER));
-  ball.y  = min(max(ball.y, 0.00), double(SCREEN_HEIGHT - BALL_DIAMETER));
+  // ball.x  = min(max(ball.x, 0.00), double(SCREEN_WIDTH  - BALL_DIAMETER));
+  ball.x = constrain(ball.x, left_vb, right_vb);
+  // ball.y  = min(max(ball.y, 0.00), double(SCREEN_HEIGHT - BALL_DIAMETER));
+  ball.y = constrain(ball.y, top_vb, bottom_vb - BALL_DIAMETER);
 
-  if(ball.y == 0.00 or ball.y == SCREEN_HEIGHT - BALL_DIAMETER) {
+  if(ball.y == top_vb or ball.y == bottom_vb - BALL_DIAMETER) {
     ball_angle *= -1;
   }
   
@@ -97,8 +107,8 @@ RectDouble Pong::ball_move(Kernel* kernel) {
 }
 
 void Pong::reset_ball() {
-  ball.x = (SCREEN_WIDTH  - BALL_DIAMETER) / 2;
-  ball.y = (SCREEN_HEIGHT - BALL_DIAMETER) / 2;
+  ball.x = (screen_width  - BALL_DIAMETER) / 2;
+  ball.y = (screen_height - BALL_DIAMETER) / 2;
 
   ball_angle = randPlusOrMinus() * (pi + randPlusOrMinus() / 100.00 * random(20, 100)); //Start roughly straight
 }
