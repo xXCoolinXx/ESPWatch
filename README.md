@@ -7,7 +7,7 @@ The watch features an analog clock, a digital clock, a modular app system, a Pon
 
 # Libraries
 
-The libraries required are TFT_eSPI, ArduinoJson, DS1307RTC, TimeLib, LittleFS, 
+The libraries required are TFT_eSPI, ArduinoJson, DS1307RTC, TimeLib, and LittleFS.
 # Secrets
 The project requires a `Secrets.h` file for WiFi and APIs. It is formatted as follows
 
