@@ -10,13 +10,13 @@
 // Defined in User_Setup.h in lib file 
 
 //Joystick
-const int SW = 3;
+const int SW = 17;
 const int VRx = A0;
 const int VRy = A3;
 // const int ANALOG = A0;
 
 //Button
-const int boggle = 1;
+const int boggle = 16;
 
 // Defined in secrets.h 
 // const String ssid     = 

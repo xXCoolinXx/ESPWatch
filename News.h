@@ -1,16 +1,22 @@
 #include "App.h"
-#include "rssRead.hpp"
+// #include "rssRead.hpp"
 
 class Kernel;
 
-const char *url = "https://feeds.npr.org/1003/rss.xml";
 
 class News : public App
 {
+  unsigned short news_idx = 1;
+  String news_summary = "";
   Kernel* kernel;
-  rssRead rss;
+  bool last_x = false;
+  TFT_eSprite* news_sprite = nullptr;
   public:
   News(Kernel* kernel);
-  void run_code(double x, double y, bool special, Kernel* kernel);
+  ~News();
+  void run_code(double x, double y, bool special);
   String get_name();
-}  
+
+  // Put it on the news scyeah
+  void updateNews();
+};

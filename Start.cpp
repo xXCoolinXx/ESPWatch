@@ -6,6 +6,7 @@
 #include "Images.h"
 #include "Pong.h"
 #include "Snake.h"
+#include "News.h"
 #include <cmath>
 
 //smaller windows like cursor
@@ -125,6 +126,8 @@ void Start::checkPress(bool special) {
     } else if (this->Cursor.x == 1 && this->Cursor.y == 0) {
       Serial.println("selecting snake");
       kernel->set_app(new Snake(kernel));
+    } else if (this->Cursor.x == 2 && this->Cursor.y == 0) {
+      kernel->set_app(new News(kernel));
     }
   }
 }

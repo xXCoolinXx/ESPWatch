@@ -1,19 +1,19 @@
-/* A font vlw file can be converted to a byte array using:
+/* The font vlw file can be converted to a byte array using:
 
    https://tomeko.net/online_tools/file_to_hex.php?lang=en
 
    Paste the byte array into a sketch tab and add two lines
-   at the start with a unique font name and }; at the end:
+   at the start with a unique font name:
 
                 const uint8_t  fontName[] PROGMEM = {
 
-             Insert byte array here
+   At the end add:
 
         };
 
    See example below. Include the tab in the main sketch, e.g.:
 
-        #include "fontName.h"
+        #include "NotoSansBold36.h"
 */
 
 

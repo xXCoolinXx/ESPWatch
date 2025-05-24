@@ -32,9 +32,9 @@ class newApp : public App
   Kernel* kernel;
   public:
   newApp(Kernel* kernel);
-  void run_code(double x, double y, bool special, Kernel* kernel);
+  void run_code(double x, double y, bool special);
   String get_name();
-}  
+};
  * newApp.cpp
 #include "newApp.h"
 #include "Kernel.h"
@@ -43,7 +43,7 @@ newApp::newApp(Kernel* kernel) : App(kernel) {
   this->kernel = kernel;
 }
 
-void newApp::run_code(double x, double y, bool special, Kernel* kernel) {}
+void newApp::run_code(double x, double y, bool special) {}
 
 String newApp::get_name() {
   return String("newApp");
