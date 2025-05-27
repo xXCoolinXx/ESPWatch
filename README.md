@@ -9,6 +9,10 @@ The watch features an analog clock, a digital clock, a modular app system, a Pon
 
 If one were to make this into a physical watch, I would imagine it would be much better to have physical buttons on the side of the watch instead of the joystick. The code is not well suited for interaction with touch, but this would also be possible with a more advanced rewrite.
 
+More images can be found in the `Images` folder.
+
+![Clock screen](<./Images/clock 1.jpg>)
+
 # Libraries
 
 The libraries required are TFT_eSPI, ArduinoJson, DS1307RTC, TimeLib, and LittleFS.
