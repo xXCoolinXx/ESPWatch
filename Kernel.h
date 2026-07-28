@@ -1,6 +1,5 @@
 #pragma once
 //#include "App.h"
-#define DS1307LIB_NOWIRE // Added to ensure DS1307 doesnt begin the wire for us // Doesn't work ...
 
 #include <TFT_eSPI.h> // Graphics and font library for ST7735 driver chip
 #include <SPI.h>

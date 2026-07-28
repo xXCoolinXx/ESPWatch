@@ -1,5 +1,4 @@
 #include "Kernel.h"
-#include "Joystick.h"
 #include "Ports.h"
 #include "Start.h"
 #include "ClockDaemon.h"
@@ -53,17 +52,16 @@ void Kernel::setup_display() {
 }
 
 void Kernel::setupf() {
-  Wire.begin(I2C_1, I2C_2);
   Serial.begin(115200);
 
   setup_display();
 
-  this->init_wifi ();
+  this->init_wifi();
   Serial.println("Setting up display works!");
-  // setup_joystick(VRx, VRy, SW);
-  // LittleFS.begin();  
-  pinMode(SW, INPUT_PULLUP);
-  pinMode(boggle, INPUT_PULLUP);
+  // LittleFS.begin(); 
+  // No longer use these things - except maybe LittleFS
+  // pinMode(SW, INPUT_PULLUP);
+  // pinMode(boggle, INPUT_PULLUP);
 
   set_app(new Start(this));
 
@@ -91,10 +89,10 @@ void Kernel::loopf() {
    display.setCursor(0, 0);
    display.setTextColor(WHITE);
 
-  bool currentSpecial = !digitalRead(SW); //Inverted because it is a pullup pin
+  bool currentSpecial = false; //Place holder - no more special button :( //!digitalRead(SW); //Inverted because it is a pullup pin
   current_app->run_code(
-    conform_joystick_axis(VRx), 
-    conform_joystick_axis(VRy), 
+      0.0,
+      0.0, //Placeholders for joystick - no more joystick :(
     currentSpecial
   );
 
@@ -166,10 +164,10 @@ double theta_major(double k) { return 2 * M_PI * k / 12 - M_PI_2; } // 12 hours 
 double theta_minor(double k) { return 2 * M_PI * k / 60 - M_PI_2; } // 60 minutes in 2 PI rad
 
 void Kernel::drawAngledWideLine(int r1, int r2, double a, int w, uint16_t fg, uint16_t bg) {   
-  auto x0 = screen_width/2 + r1 * cos(a);
-  auto y0 = screen_height/2 + r1 * sin(a);
-  auto x1 = screen_width/2 + r2 * cos(a);
-  auto y1 = screen_height/2 + r2 * sin(a);
+  auto x0 = screen_width/2.0 + r1 * cos(a);
+  auto y0 = screen_height/2.0 + r1 * sin(a);
+  auto x1 = screen_width/2.0 + r2 * cos(a);
+  auto y1 = screen_height/2.0 + r2 * sin(a);
 
   this->display.drawWideLine(x0, y0, x1, y1, w, fg, bg);
 }
@@ -186,8 +184,8 @@ void Kernel::drawAnalog() {
   // drawWedgeLine(float ax, float ay, float bx, float by, float aw, float bw, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF)
   auto tm  = this->_clock->get_time();
 
-  double a_hour = theta_major(tm.Hour%12 + tm.Minute / 60.0);
-  double a_min = theta_minor(tm.Minute + tm.Second/60.0);
+  double a_hour = theta_major(tm.tm_hour%12 + tm.tm_min / 60.0);
+  double a_min = theta_minor(tm.tm_min + tm.tm_sec/60.0);
 
   // Serial.println(tm.Minute);
 
@@ -196,7 +194,7 @@ void Kernel::drawAnalog() {
     this->drawAngledWideLine(r_cursor, r_cursor-10, this->prev_a_min, cursor_w+2, TFT_BLACK, TFT_BLACK);
   }
 
-  this->drawAngledWideLine(r_cursor, r_cursor-10, a_hour, cursor_w, (tm.Hour > 12) ? TFT_BLUE : TFT_YELLOW);
+  this->drawAngledWideLine(r_cursor, r_cursor-10, a_hour, cursor_w, (tm.tm_hour > 12) ? TFT_BLUE : TFT_YELLOW);
   this->drawAngledWideLine(r_cursor, r_cursor-10, a_min, cursor_w);
   
   this->prev_a_hour = a_hour;
