@@ -37,8 +37,8 @@ void Pong::run_code(double x, double y, bool special) {
   kernel->display.fillRect(user_last.x, user_last.y, user_last.width, user_last.height, BLACK);
   kernel->display.fillRect(user_pad .x, user_pad .y, user_pad .width, user_pad .height, WHITE);
 
-  kernel->display.fillCircle(ball_last.x + BALL_DIAMETER/2, ball_last.y + BALL_DIAMETER/2, BALL_DIAMETER/2, BLACK);
-  kernel->display.fillCircle(ball     .x + BALL_DIAMETER/2, ball     .y + BALL_DIAMETER/2, BALL_DIAMETER/2, WHITE);
+  kernel->display.fillCircle(ball_last.x + BALL_DIAMETER/2.0, ball_last.y + BALL_DIAMETER/2.0, BALL_DIAMETER/2, BLACK);
+  kernel->display.fillCircle(ball     .x + BALL_DIAMETER/2.0, ball     .y + BALL_DIAMETER/2.0, BALL_DIAMETER/2, WHITE);
 
   kernel->display.fillRect((screen_width - 2) / 2, top_vb, 2, viewbox_wh, WHITE); //Center line
   

@@ -15,9 +15,9 @@ const double pi = 4 * atan(1.0);
 class Kernel;
 
 class Pong : public App {
-  RectDouble comp_pad{(screen_width - viewbox_wh)/2 + PAD_OFFSET, (screen_height - PAD_HEIGHT) / 2, PAD_WIDTH, PAD_HEIGHT};
-  RectDouble user_pad{(screen_width + viewbox_wh)/2 - PAD_WIDTH - PAD_OFFSET, (screen_height - PAD_HEIGHT) / 2, PAD_WIDTH, PAD_HEIGHT};
-  RectDouble ball{screen_width/2, screen_height/2, BALL_DIAMETER, BALL_DIAMETER};
+  RectDouble comp_pad{(screen_width - viewbox_wh)/2.0 + PAD_OFFSET, (screen_height - PAD_HEIGHT) / 2.0, PAD_WIDTH, PAD_HEIGHT};
+  RectDouble user_pad{(screen_width + viewbox_wh)/2.0 - PAD_WIDTH - PAD_OFFSET, (screen_height - PAD_HEIGHT) / 2.0, PAD_WIDTH, PAD_HEIGHT};
+  RectDouble ball{screen_width/2.0, screen_height/2.0, BALL_DIAMETER, BALL_DIAMETER};
   
   const double ball_speed = 1.10;
   const double comp_speed = 0.75;

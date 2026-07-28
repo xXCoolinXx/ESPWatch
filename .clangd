@@ -1,26 +1,21 @@
-CompileFlags:
+CompileFlags:  
+  QueryDriver: 
+    - "**/*xtensa-esp32*-elf-gcc*"
+    - "**/*xtensa-esp32*-elf-g++*"
+    - "**/*gcc*"
+
   Add:
-    # 1. Target and architecture macros required for ESP32 v3.x core & FreeRTOS
-    - "-DESP32"
-    - "-DARDUINO=10812"
-    - "-D__XTENSA__=1"
-    - "-DCONFIG_FREERTOS_UNICORE=0"
+    - "-D__extension__="
+    - "-D__attribute__(x)="
+    - "-D_GNU_SOURCE"
+  Remove:
+    - "-fno-tree-switch-conversion"
+    - "-fstrict-volatile-bitfields"
+    - "-mlongcalls"
+    - "-mfix-esp32-psram-cache-issue"
+    - "-mdisable-hardware-atomics"
 
-    # 2. ESP32 Core & FreeRTOS Include Paths
-    - "-I.devenv/arduino/data/packages/esp32/hardware/esp32/3.3.11/cores/esp32"
-    - "-I.devenv/arduino/data/packages/esp32/hardware/esp32/3.3.11/variants/esp32s3"
-    - "-I.devenv/arduino/data/packages/esp32/hardware/esp32/3.3.11/tools/sdk/esp32s3/include/freertos/FreeRTOS-Kernel/include"
-    - "-I.devenv/arduino/data/packages/esp32/hardware/esp32/3.3.11/tools/sdk/esp32s3/include/freertos/FreeRTOS-Kernel/portable/xtensa/include"
-    - "-I.devenv/arduino/data/packages/esp32/hardware/esp32/3.3.11/tools/sdk/esp32s3/include/freertos/FreeRTOS-Kernel-Supplementary/include"
-
-    # 3. Third-Party Library Include Paths
-    # Note: Clangd requires pointing to the specific library subdirectories, not just /libraries
-    - "-I.devenv/arduino/user/libraries/TFT_eSPI"
-    - "-I.devenv/arduino/user/libraries/SensorLib/src"
-    - "-I.devenv/arduino/user/libraries/cst816t/src"
-    - "-I.devenv/arduino/user/libraries/ArduinoJson/src"
-    - "-I.devenv/arduino/user/libraries/Time"
-    - "-I.devenv/arduino/user/libraries/TimeAlarms"
-    - "-I.devenv/arduino/user/libraries/NTPClient"
-
-  Compiler: xtensa-esp32s3-elf-g++
+Diagnostics:
+  Suppress:
+    - "drv_unknown_argument"
+    - "pp_file_not_found"

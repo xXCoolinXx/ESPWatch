@@ -3,7 +3,7 @@
 
 // #include <TimeLib.h>
 #include <time.h>
-#include <TimeAlarms.h>
+// #include <TimeAlarms.h>
 #include <FS.h>
 #include <LittleFS.h>
 #include <ArduinoJson.h>
@@ -14,10 +14,10 @@
 #define ALARM_PATH "/alarms.json"
 
 // NTP Setup
-const char* ntpServer1 = "pool.ntp.org";
-const char* ntpServer2 = "time.nist.gov";
+inline constexpr const char* ntpServer1 = "pool.ntp.org";
+inline constexpr const char* ntpServer2 = "time.nist.gov";
 
-const char* time_zone = "CST6CDT,M3.2.0,M11.1.0";
+inline constexpr const char* time_zone = "CST6CDT,M3.2.0,M11.1.0";
 
 enum Add {
   DOWN = -1,
