@@ -1,61 +1,30 @@
 #include "ClockDaemon.h"
 #include "Ports.h"
-#include "Pitches.h"
-#undef SERIAL
+#include "time.h"
+// #undef SERIAL
 
-// notes in the melody:
-const short melody[] = {
-  NOTE_C6, NOTE_DS6, NOTE_F6, NOTE_FS6, NOTE_F6, NOTE_DS6, NOTE_C6, NOTE_AS5, NOTE_D6, NOTE_C6, 
-};
-const short noteDurations[]  = {
-  4, 4, 4, 4, 4, 4, 2, 8, 8, 2,
-};
-
-void drip() {
-  // iterate over the notes of the melody:
-  for (int thisNote = 0; thisNote < 10; thisNote++) {
-
-    // to calculate the note duration, take one second divided by the note type.
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-    int noteDuration = 1000 / noteDurations[thisNote];
-    tone(Speaker, melody[thisNote], noteDuration);
-
-    // to distinguish the notes, set a minimum time between them.
-    // the note's duration + 30% seems to work well:
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
-    // stop the tone playing:
-    noTone(Speaker);
-  }
+void ClockDaemon::update_time_from_tm(struct tm &time_info) {
+  this->tm.Second = time_info.tm_sec;
+  this->tm.Minute = time_info.tm_min;
+  this->tm.Hour   = time_info.tm_hour;
+  this->tm.Day    = time_info.tm_mday;
+  this->tm.Month  = time_info.tm_mon + 1;
+  this->tm.Year   = time_info.tm_year - 70;         
+  this->tm.Wday   = time_info.tm_wday + 1;         
 }
 
-
-
 void ClockDaemon::sync() {
-  WiFiUDP ntpUDP;
-
-  // You can specify the time server pool and the offset (in seconds, can be
-  // changed later with setTimeOffset() ). Additionaly you can specify the
-  // update interval (in milliseconds, can be changed using setUpdateInterval() ).
-  NTPClient timeClient(ntpUDP, -5*60*60);
-
-  short timeout = 0;
-  if (WiFi.status() == WL_CONNECTED) {
-    timeClient.begin();
-    
-    if (timeClient.update()) {    
-      breakTime(timeClient.getEpochTime(), this->tm);
-      
-      if(!RTC.write(this->tm)) {
-        Serial.println("Writing to RTC clock failed :_(");
-      } else {
-        Serial.println("NTP time: " + timeClient.getFormattedTime());
-      }
-    }
-    timeClient.end();
-  } else {
-    Serial.println("Failed to sync time: WiFi not connected.");
+  struct tm time_info;
+  if (WiFi.status() != WL_CONNECTED) { 
+    Serial.println("Getting NTP time failed - WiFi not connected.");
+    return; 
   }
+  if(!getLocalTime(&time_info)) {
+    Serial.println("Getting NTP time failed :(");
+    return;
+  } 
+
+  this->update_time_from_tm(time_info);
 }
 
 void ClockDaemon::setupf() {
