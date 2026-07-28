@@ -1,11 +1,5 @@
 #pragma once
-// #define DS1307LIB_NOWIRE // Added to ensure DS1307 doesnt begin the wire for us // Doesn't work ...
-// #include <DS1307RTC.h>
-// #include <NTPClient.h>
-// change next line to use with another board/shield
-// #include <ESP8266WiFi.h>
 #include <WiFi.h> // for WiFi shield
-//#include <WiFi101.h> // for WiFi 101 shield or MKR1000
 
 // #include <TimeLib.h>
 #include <time.h>
