@@ -1,7 +1,6 @@
 { pkgs, lib, config, inputs, ... }:
 
 let
-  fqbn = "esp32:esp32:esp32s3:CDCOnBoot=cdc,MSys=16M,PSRAM=enabled"; 
 
   defaultPort = "/dev/ttyACM0";
 in
@@ -28,36 +27,29 @@ in
 
   # https://devenv.sh/scripts/
   env = {
-    ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS = "https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json";
-    
+    ARDUINO_CONFIG_FILE = "./arduino-cli.yaml"; 
+
     ARDUINO_DIRECTORIES_DATA = "./.devenv/arduino/data";
     ARDUINO_DIRECTORIES_USER = "./.devenv/arduino/user";
     ARDUINO_DIRECTORIES_DOWNLOADS = "./.devenv/arduino/staging";
   };
 
   scripts = {
-    arduino-init.exec = ''
-      arduino-cli config init --overwrite
-      arduino-cli core install esp32:esp32
-      arduino-cli lib install "TFT_eSPI"
-      arduino-cli lib install "CST816S"
-      arduino-cli lib install "SensorLib"
-      arduino-cli lib install "ArduinoJson"
-      arduino-cli lib install "Time"
-      arduino-cli lib install "TimeAlarms"
-
-      echo "Arduino configuration initialized"
-    ''; 
-
+    # arduino-init.exec = ''
+    #   arduino-cli core update-index
+    #
+    #   echo "Arduino configuration initialized"
+    # ''; 
+    #
     compile-sketch.exec = ''
-      echo "🔨 Compiling $SKETCH for ESP32-S3..."
-      arduino-cli compile --fqbn ${fqbn} .
+      echo "🔨 Compiling for ESP32-S3..."
+      arduino-cli compile .
     '';
 
     upload-sketch.exec = ''
       PORT=''${PORT:-${defaultPort}}
-      echo "⚡ Uploading $SKETCH to $PORT..."
-      arduino-cli upload -p "$PORT" --fqbn ${fqbn} .
+      echo "⚡ Uploading to $PORT..."
+      arduino-cli upload -p "$PORT" .
     '';
 
     flash-sketch.exec = ''
@@ -74,7 +66,6 @@ in
 
   # https://devenv.sh/basics/
   enterShell = ''
-    arduino-init
     git --version # Use packages
   '';
 
