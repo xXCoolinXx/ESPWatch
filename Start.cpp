@@ -2,7 +2,7 @@
 #include "Kernel.h"
 #include "ClockDaemon.h"
 #include "MyPrint.h"
-#include "Clock.h"
+// #include "Clock.h"
 #include "Images.h"
 #include "Pong.h"
 #include "Snake.h"
@@ -134,13 +134,19 @@ void Start::checkPress(bool special) {
 
 void Start::display_time() {
   kernel->display.setTextColor(TFT_WHITE, TFT_BLACK, true);
-  tmElements_t tm = kernel->_clock->get_time();
+  struct tm current_time = kernel->_clock->get_time();
   kernel->display.setTextDatum(MC_DATUM);
   kernel->loadBigFont();
-  print_time(tm, &(kernel->display), screen_width/2, screen_height/2 - 10);
+  print_time(current_time, &(kernel->display), screen_width/2, screen_height/2 - 10);
 
   kernel->loadSmallFont();
-  kernel->display.drawString(format0(tm.Month) + "/" + format0(tm.Day) + "/" + format0(tm.Year - 30), screen_width/2, screen_height/2 + 20); //tm.Year starts is 0@1970, so +1970 then -2000 = -30
+  kernel->display.drawString(
+      format0(current_time.tm_mon) + "/" + 
+      format0(current_time.tm_mday) + "/" + 
+      format0(current_time.tm_year - 30), 
+      screen_width/2, 
+      screen_height/2 + 20
+  ); //tm.Year starts is 0@1970, so +1970 then -2000 = -30
 }
 
 void Start::displayApps() {

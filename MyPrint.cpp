@@ -17,7 +17,7 @@ void print2_space(short number, TFT_eSPI* display) {
   display->print(number);
 }
 
-void print_time(tmElements_t tm, TFT_eSPI* display, int x, int y) {
+void print_time(struct tm current_time, TFT_eSPI* display, int x, int y) {
   // auto colon = [display] { display->print(":"); };
   // print2(tm.Hour, display);
   // colon();
@@ -25,7 +25,7 @@ void print_time(tmElements_t tm, TFT_eSPI* display, int x, int y) {
   // colon();
   // print2(tm.Second, display);
 
-  String out = format0(tm.Hour) + ":" + format0(tm.Minute);
+  String out = format0(current_time.tm_hour) + ":" + format0(current_time.tm_min);
   
   display->drawString(out, x, y);
 }
