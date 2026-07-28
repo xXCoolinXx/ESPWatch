@@ -9,12 +9,6 @@
 // const int dc   =  10;
 // Defined in User_Setup.h in lib file 
 
-//Joystick
-const int SW = 17;
-const int VRx = A0;
-const int VRy = A3;
-// const int ANALOG = A0;
-
 //Button
 const int boggle = 16;
 

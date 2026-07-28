@@ -41,9 +41,17 @@ in
     #   echo "Arduino configuration initialized"
     # ''; 
     #
+    
+    lsp-gen.exec = ''
+      echo "📝 Generating compile_commands.json..."
+      arduino-cli compile --only-compilation-database --output-dir .devenv/build .
+      cp .devenv/build/compile_commands.json ./compile_commands.json
+    '';
+
     compile-sketch.exec = ''
       echo "🔨 Compiling for ESP32-S3..."
-      arduino-cli compile .
+      arduino-cli compile --output-dir .devenv/build .
+      cp .devenv/build/compile_commands.json ./compile_commands.json
     '';
 
     upload-sketch.exec = ''
