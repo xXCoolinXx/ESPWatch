@@ -2,6 +2,7 @@
 
 let 
   defaultPort = "/dev/ttyACM0";
+  buildDir = "./.devenv/build";
 in
 {
   # https://devenv.sh/packages/
@@ -45,21 +46,22 @@ in
       echo "📝 Generating compile_commands.json..."
       arduino-cli compile \
         --only-compilation-database \
-        --build-path .devenv/build
+        --build-path ${buildDir}
       cp .devenv/build/compile_commands.json ./compile_commands.json 
     ''; # copy the compile_commands.json so that the LSP sees it :)
 
     compile-sketch.exec = ''
       echo "🔨 Compiling for ESP32-S3..."
       arduino-cli compile \
-        --build-path .devenv/build
+        --build-path ${buildDir} \
+        --clean
       cp .devenv/build/compile_commands.json ./compile_commands.json
     '';
 
     upload-sketch.exec = ''
       PORT=''${PORT:-${defaultPort}}
       echo "⚡ Uploading to $PORT..."
-      arduino-cli upload -p "$PORT" .
+      arduino-cli upload -p "$PORT" --build-path ${buildDir} .
     '';
 
     flash-sketch.exec = ''
