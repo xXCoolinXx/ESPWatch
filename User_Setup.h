@@ -1,7 +1,4 @@
-// This is the User_Setup file for TFT_eSPI
-// Because the motherfuckers who created that library decided to have a config file that needs to be modified WITHIN THE LIBRARY
-// Luckily, devenv.nix is powerful enough to avoid this travesty of non-reproducibility - just copy it into the library and git-track the file itself
-
+// See SetupX_Template.h for all options available
 #define USER_SETUP_ID 302
 
 #define GC9A01_DRIVER
@@ -26,8 +23,6 @@
 
 #define TFT_WIDTH 240
 #define TFT_HEIGHT 240
-
-#define USE_HSPI_PORT          // Force HSPI for esp32 >= v3.0
 
 #define SPI_FREQUENCY  40000000
 

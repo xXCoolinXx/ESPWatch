@@ -1,7 +1,7 @@
 { pkgs, lib, config, inputs, ... }:
 
 let
-  buildOptFlag = ''--build-property "compiler.cpp.extra_flags=@build.opt"'';
+  buildOptFlag = ''--build-property "compiler.cpp.extra_flags=@build.opt"''; # We use this to include the User_Setup.h without needing to modify it in the library
   defaultPort = "/dev/ttyACM0";
 in
 {
@@ -44,13 +44,18 @@ in
     
     lsp-gen.exec = ''
       echo "📝 Generating compile_commands.json..."
-      arduino-cli compile ${buildOptFlag} --only-compilation-database --build-path .devenv/build
+      arduino-cli compile \
+        ${buildOptFlag} \
+        --only-compilation-database \
+        --build-path .devenv/build
       cp .devenv/build/compile_commands.json ./compile_commands.json 
     ''; # copy the compile_commands.json so that the LSP sees it :)
 
     compile-sketch.exec = ''
       echo "🔨 Compiling for ESP32-S3..."
-      arduino-cli compile ${buildOptFlag} --build-path .devenv/build
+      arduino-cli compile \
+        ${buildOptFlag} \
+        --build-path .devenv/build
       cp .devenv/build/compile_commands.json ./compile_commands.json
     '';
 
