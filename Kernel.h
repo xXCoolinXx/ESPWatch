@@ -13,8 +13,8 @@
 #include "NotoSansBold15.h"
 #include "NotoSansBold36.h"
 #include "GFXConstants.h"
-#include <CST816S.h>
 #include "Ports.h"
+#include "TouchHandler.hpp"
 
 // The font names are arrays references, thus must NOT be in quotes ""
 #define AA_FONT_SMALL NotoSansBold15
@@ -46,7 +46,7 @@ class Kernel {
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
   ClockDaemon* _clock = nullptr;
-  CST816S touch = CST816S(TP_SDA, TP_SCL, TP_RST, TP_INT);
+  TouchHandler::Handler touch;
 
   Kernel();
   
@@ -54,8 +54,6 @@ class Kernel {
   void loopf();
   float get_fps(); 
   void set_app(App* app);
-
-  data_struct getTouchData();
 
   void clearNext(); //Clear on next loop
   void clearOnce(); //Check if screen is supposed to be cleared 

@@ -14,7 +14,7 @@ class News : public App
   public:
   News(Kernel* kernel);
   ~News();
-  void run_code(const data_struct& tp);
+  void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
   String get_name();
 
   // Put it on the news scyeah

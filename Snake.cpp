@@ -1,19 +1,19 @@
 #include "Snake.h"
 #include "Kernel.h"
 
-SnakeDir Snake::getDirFromTouch(const data_struct& tp) {
-  if(true) {
-    switch(tp.gestureID) {
-      case GESTURE::SWIPE_UP:
+SnakeDir Snake::getDirFromTouch(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
+  if(gesture) {
+    switch(gesture.value()) {
+      case TouchHandler::Gesture::SWIPE_UP:
         return SNAKE_UP;
         break;
-      case GESTURE::SWIPE_DOWN:
+      case TouchHandler::Gesture::SWIPE_DOWN:
         return SNAKE_DOWN;
         break;
-      case GESTURE::SWIPE_LEFT:
+      case TouchHandler::Gesture::SWIPE_LEFT:
         return SNAKE_LEFT;
         break;
-      case GESTURE::SWIPE_RIGHT:
+      case TouchHandler::Gesture::SWIPE_RIGHT:
         return SNAKE_RIGHT;
         break;
       default:
@@ -31,7 +31,7 @@ Snake::Snake(Kernel* kernel) : App(kernel) {
   this->move_apple();
 }
 
-void Snake::run_code(const data_struct& tp) {
+void Snake::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
   this->kernel->drawViewBox();
 
   time_since_last_move += this->kernel->getDeltaTime();
@@ -44,7 +44,7 @@ void Snake::run_code(const data_struct& tp) {
     
     this->kernel->display.fillRect(this->apple.x, this->apple.y, this->apple.width, this->apple.height, TFT_RED);
 
-    SnakeDir new_direction = this->getDirFromTouch(tp);
+    SnakeDir new_direction = this->getDirFromTouch(gesture, pt);
 
     bool add_part = false;
     RectInt prev_tail;

@@ -58,7 +58,7 @@ void Kernel::setupf() {
   Serial.println("Reached Kernel::setupf");
   
   this->setup_display();
-  this->init_touch();
+  this->touch.init();
   this->init_wifi();
   Serial.println("Setting up display works!");
   // LittleFS.begin();  
@@ -79,20 +79,6 @@ void Kernel::setupf() {
   Serial.println("Finished setup");
 }
 
-data_struct Kernel::getTouchData() {
-  if(this->touch.available()) {
-    return this->touch.data;
-  } else {
-    return {
-      .gestureID = GESTURE::NONE,
-      .points = 0,
-      .event = 0,
-      .x = -1,
-      .y = -1,
-    };
-  }
-}
-
 void Kernel::loopf() {
   long t_0 = millis();
   
@@ -107,12 +93,9 @@ void Kernel::loopf() {
   display.setCursor(0, 0);
   display.setTextColor(WHITE);
     
-  data_struct tp = this->getTouchData();
-  if(touch.available()) {
-    Serial.println("You got tapped - " + touch.gesture());
-  } 
+  auto [gesture, current_point] = this->touch.getTouchData();
 
-  current_app->run_code(tp);
+  current_app->run_code(gesture, current_point);
 
   #ifdef DEBUG
   display.setCursor(0, display.height() - 7);

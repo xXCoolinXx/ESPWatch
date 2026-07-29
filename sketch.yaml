@@ -3,7 +3,7 @@ profiles:
   esp32_touch_128:
     fqbn: esp32:esp32:esp32s3:CDCOnBoot=default,FlashSize=16M,PSRAM=enabled,PartitionScheme=app3M_fat9M_16MB
     platforms:
-      - platform: esp32:esp32 (2.0.12)
+      - platform: esp32:esp32 (3.3.11)
         platform_index_url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
     libraries:
       - TFT_eSPI (2.5.43)

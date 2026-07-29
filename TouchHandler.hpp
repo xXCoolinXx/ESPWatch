@@ -18,6 +18,9 @@ namespace TouchHandler {
   const unsigned long TOUCH_TIMEOUT = 150;
   const double MIN_SWIPE_DISTANCE = 20.0;
   const double MAX_SWIPE_ANGLE_FROM_AXIS = 2 * M_PI / 3; // 30 degrees
+  const int MAX_TAP_DISTANCE = 10;
+  const unsigned long MAX_TAP_DURATION = 300;
+  const unsigned long MIN_LONG_PRESS_DURATION = 1000;
 
   enum Gesture {
     SWIPE_UP,
@@ -28,9 +31,10 @@ namespace TouchHandler {
     LONG_PRESS,
   };
 
-  typedef std::optional<Gesture> oGesture;
+  typedef std::optional<TouchHandler::Gesture> oGesture;
 
   oGesture swipeHandler(PointInt initial_point, PointInt final_point);
+  oPointInt tapHandler(PointInt initial_point, PointInt final_point, unsigned long duration);
 
   enum Event {
     DOWN = 0,

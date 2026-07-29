@@ -44,17 +44,16 @@ void Start::_setup_sprites() {
   make_sprite(snake, &(this->kernel->display), APP_DIM, APP_DIM, snake18);
 }
 
-void Start::run_code(const data_struct& tp) {
+void Start::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
   // Toggle app view vs digital clock view on tap
-  if(tp.gestureID == GESTURE::LONG_PRESS) {
-    PointInt pt = PointInt{tp.x, tp.y};
-    bool in_viewbox = viewbox_rect.contains(pt);
+  if(gesture && pt && gesture.value() == TouchHandler::Gesture::TAP) {
+    bool in_viewbox = viewbox_rect.contains(pt.value());
     
     if(this->showTime || !in_viewbox) { 
       this->showTime = ! this->showTime;
       kernel->clearViewBox();
     } else if(in_viewbox) {
-      this->checkPress(pt);
+      this->checkPress(pt.value());
     }
   }
 

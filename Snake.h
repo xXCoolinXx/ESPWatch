@@ -34,10 +34,10 @@ class Snake : public App {
   public:
   Snake(Kernel* kernel);
   ~Snake();
-  void run_code(const data_struct& tp);
+  void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
   void delete_snake();
 
-  SnakeDir getDirFromTouch(const data_struct& tp);
+  SnakeDir getDirFromTouch(const TouchHandler::oGesture& gesture, const oPointInt& pt);
 
   void move_apple();
 

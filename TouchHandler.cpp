@@ -33,9 +33,21 @@ namespace TouchHandler {
     return std::nullopt;
   }
 
+  oPointInt tapHandler(PointInt initial_point, PointInt final_point, unsigned long duration) {
+    PointInt v = final_point - initial_point;
+    if(v.norm() < MAX_TAP_DISTANCE) {
+      if(duration < MAX_TAP_DURATION) {
+        return Gesture::TAP;
+      } else if(duration > MIN_LONG_PRESS_DURATION) {
+        return Gesture::LONG_PRESS;
+      }
+    }
+
+    return std::nullopt;
+  }
+
   std::tuple<oGesture, oPointInt> Handler::getTouchData() {
     oGesture gesture;
-    oPointInt current_point;
 
     if(!this->_touch.available()) {
       return std::make_tuple(gesture, current_point);
@@ -48,7 +60,7 @@ namespace TouchHandler {
       this->resetPoints();
       this->setPoints(pt); 
     } else if (tp.event == Event::CONTACT) {
-      if(!initial_point) {
+      if(!initial_point) { //Handle a missed down signal
         this->resetPoints();
         this->setPoints(pt);
       } else {
@@ -62,15 +74,25 @@ namespace TouchHandler {
       }
 
       // Basically just keep going until we have exhausted all gesture processing
-      if(!gesture) { gesture = swipeHandler(
+      if(!gesture) {
+          gesture = swipeHandler(
             this->initial_point.value(), 
             this->current_point.value()
           ); 
+      }
+      if(!gesture) {
+        gesture = tapHandler(
+            this->initial_point.value(), 
+            this->current_point.value(), 
+            this->last_touch_time - this->initial_touch_time
+        );
       }
 
       // Reset points
       this->resetPoints();
     }
+
+    return std::make_tuple(gesture, this->current_point);
   }
 
   void Handler::resetPoints() {

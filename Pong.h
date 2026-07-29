@@ -29,9 +29,9 @@ class Pong : public App {
   Kernel* kernel;
   public:
     Pong(Kernel* kernel);
-    void run_code(const data_struct& tp);
+    void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
     String get_name();
-    RectDouble user_move(const data_struct& tp);    
+    RectDouble user_move(const oPointInt& pt);    
     RectDouble comp_move();
     RectDouble ball_move();
     void reset_ball();

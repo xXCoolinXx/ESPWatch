@@ -31,7 +31,7 @@ class Start : public App {
   public:
   Start(Kernel* kernel);
   ~Start();
-  void run_code(const data_struct& tp);
+  void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
   String get_name();
   
   void display_time();

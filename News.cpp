@@ -101,17 +101,17 @@ News::News(Kernel* kernel) : App(kernel) {
   this->news_sprite->setTextWrap(true);
 }
 
-void News::run_code(const data_struct& tp) {
+void News::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
   // Slide left and right based on the active gesture
-  if(tp.gestureID) {
-    switch(tp.gestureID) {
-      case GESTURE::SWIPE_RIGHT:
+  if(gesture) {
+    switch(gesture.value()) {
+      case TouchHandler::Gesture::SWIPE_RIGHT:
         if(this->news_idx > 1) {
           this->news_idx -= 1;
           updateNews();
         }
         break;
-      case GESTURE::SWIPE_LEFT:
+      case TouchHandler::Gesture::SWIPE_LEFT:
         this->news_idx += 1;
         updateNews();
         break;
