@@ -1,5 +1,6 @@
 
 #pragma once
+#include <cmath>
 struct PointDouble {
   public: 
     double x;
@@ -18,6 +19,13 @@ struct PointInt {
   public:
     int x;
     int y;
+    
+    friend PointInt operator-(const PointInt& lhs, const PointInt& rhs) {
+        return PointInt{lhs.x - rhs.x, lhs.y - rhs.y};
+    }
+    double norm() const {
+      return std::sqrt(std::pow((double)this->x, 2) + std::pow((double)this->y, 2));
+    }
 };
 
 struct RectInt {
