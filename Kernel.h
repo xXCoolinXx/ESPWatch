@@ -13,6 +13,8 @@
 #include "NotoSansBold15.h"
 #include "NotoSansBold36.h"
 #include "GFXConstants.h"
+#include "TouchDrv.hpp"
+// #include "TouchDrvCST.hpp"
 
 // The font names are arrays references, thus must NOT be in quotes ""
 #define AA_FONT_SMALL NotoSansBold15
@@ -28,6 +30,7 @@ class Kernel {
   
   void setup_display();
   void init_wifi();
+  void init_touch();
 
   bool lastSpecial = false;
 
@@ -42,7 +45,8 @@ class Kernel {
   unsigned long deltaTime = 0;
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
-  ClockDaemon* _clock;
+  ClockDaemon* _clock = nullptr;
+  TouchDrvCSTXXX touch;
 
   Kernel();
   

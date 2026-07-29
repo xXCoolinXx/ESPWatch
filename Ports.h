@@ -19,5 +19,7 @@ const int boggle = 16;
 //Speaker
 const int Speaker = 5;
 
-const int I2C_1 = 32;
-const int I2C_2 = 33;
+const int TP_SDA = 6;
+const int TP_SCL = 7;
+const int TP_INT = 5;
+const int TP_RST = 13;

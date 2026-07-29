@@ -8,9 +8,6 @@
 #include <Wire.h>
 #include "Shapes.h"
 
-// #include <DS1307RTC.h>
-
-
 //#define DEBUG
 
 void Kernel::init_wifi() {
@@ -30,6 +27,15 @@ void Kernel::init_wifi() {
   } else { 
     Serial.println(WiFi.localIP());
   }
+}
+
+void Kernel::init_touch() {
+  touch.setPins(TP_RST, TP_INT);
+
+  touch.setTouchDrvModel(TouchDrv_CST8XX);
+  Wire.begin(TP_SDA, TP_SCL);
+  
+  this->touch.begin(Wire, CST816_SLAVE_ADDRESS, TP_SDA, TP_SCL);  
 }
 
 Kernel::Kernel() : display(TFT_eSPI()) {
@@ -54,12 +60,12 @@ void Kernel::setup_display() {
 void Kernel::setupf() {
   Serial.begin(115200);
 
-  setup_display();
-
+  
+  this->setup_display();
+  this->init_touch();
   this->init_wifi();
   Serial.println("Setting up display works!");
-  // LittleFS.begin(); 
-  // No longer use these things - except maybe LittleFS
+  // LittleFS.begin();  
   // pinMode(SW, INPUT_PULLUP);
   // pinMode(boggle, INPUT_PULLUP);
 
