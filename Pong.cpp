@@ -27,7 +27,7 @@ short randPlusOrMinus() {
 void Pong::run_code(const TouchPoints& tp) {
   kernel->drawViewBox();
 
-  RectDouble user_last = user_move(x, y);
+  RectDouble user_last = user_move(tp);
   RectDouble comp_last = comp_move();
   RectDouble ball_last = ball_move();
 
@@ -54,13 +54,21 @@ void Pong::printScores() {
   kernel->display.drawString(format0(this->user_score), center_x + viewbox_wh / 4, top_vb + SCORE_Y);
 }
 
-RectDouble Pong::user_move(double x, double y) {
+RectDouble Pong::user_move(const TouchPoints& tp) {
   RectDouble last = user_pad;
   
-  double fps_ratio = 80.00 / kernel->get_fps(); 
+  // double fps_ratio = 80.00 / kernel->get_fps(); 
   // user_pad.y = min(, max(, ));
-
-  user_pad.y = constrain(user_pad.y + fps_ratio * y, double(top_vb), double(bottom_vb - user_pad.height));
+  
+  if(tp.hasPoints())
+  { 
+    TouchPoint t = tp.getPoint(0);
+    user_pad.y = constrain( // Take the easy way out and just directly couple paddle movement to finger movement, TODO: Update this
+        t.y, 
+        double(top_vb), 
+        double(bottom_vb - user_pad.height)
+    );
+  }
 
   return last;
 }

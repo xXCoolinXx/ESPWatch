@@ -31,7 +31,7 @@ class Pong : public App {
     Pong(Kernel* kernel);
     void run_code(const TouchPoints& tp);
     String get_name();
-    RectDouble user_move(double x, double y);
+    RectDouble user_move(const TouchPoints& tp);    
     RectDouble comp_move();
     RectDouble ball_move();
     void reset_ball();
