@@ -35,12 +35,12 @@ in
   };
 
   scripts = {
-    # arduino-init.exec = ''
-    #   arduino-cli core update-index
-    #
-    #   echo "Arduino configuration initialized"
-    # ''; 
-    #
+    # Finds all installed versions of TFT_eSPI and puts the User_Setup.h directly into them - avoid having to copy manually
+    copy_user_setup.exec = ''
+      echo "Copying local User_Setup.h into TFT_eSPI.h library"
+      find ./.devenv/arduino/data/internal/ -type d -path "*/TFT_eSPI_*/TFT_eSPI" \
+      -exec cp ./User_Setup.h {}/ \;
+    '';
     
     lsp-gen.exec = ''
       echo "📝 Generating compile_commands.json..."
@@ -79,6 +79,7 @@ in
 
   # https://devenv.sh/basics/
   enterShell = ''
+    copy_user_setup
     git --version # Use packages
   '';
 
