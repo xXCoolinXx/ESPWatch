@@ -31,7 +31,7 @@ Snake::Snake(Kernel* kernel) : App(kernel) {
   this->move_apple();
 }
 
-void Snake::run_code(double x, double y, bool special) {
+void Snake::run_code(const TouchPoints& tp) {
   this->kernel->drawViewBox();
 
   time_since_last_move += this->kernel->getDeltaTime();

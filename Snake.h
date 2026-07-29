@@ -39,7 +39,7 @@ class Snake : public App {
   public:
   Snake(Kernel* kernel);
   ~Snake();
-  void run_code(double x, double y, bool special);
+  void run_code(const TouchPoints& tp);
   void delete_snake();
 
   SnakeDir getdirFromJoystick(double x, double y);

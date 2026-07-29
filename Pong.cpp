@@ -24,7 +24,7 @@ short randPlusOrMinus() {
   }
 }
 
-void Pong::run_code(double x, double y, bool special) {
+void Pong::run_code(const TouchPoints& tp) {
   kernel->drawViewBox();
 
   RectDouble user_last = user_move(x, y);

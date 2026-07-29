@@ -29,7 +29,7 @@ class Pong : public App {
   Kernel* kernel;
   public:
     Pong(Kernel* kernel);
-    void run_code(double x, double y, bool special);
+    void run_code(const TouchPoints& tp);
     String get_name();
     RectDouble user_move(double x, double y);
     RectDouble comp_move();

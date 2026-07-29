@@ -85,7 +85,7 @@ void Start::display_cursor() {
   // kernel->display.drawBitmap(    Cursor.x,     Cursor.y, cursor,     Cursor.width,     Cursor.height, (    Cursor.y >= 8) ? WHITE : BLACK);
 }
 
-void Start::run_code(double x, double y, bool special) {
+void Start::run_code(const TouchPoints& tp) {
   // Serial.println(x,y);
   // move_cursor(x, y);
   // checkPress(special);
@@ -141,9 +141,9 @@ void Start::display_time() {
 
   kernel->loadSmallFont();
   kernel->display.drawString(
-      format0(current_time.tm_mon) + "/" + 
+      format0(current_time.tm_mon + 1) + "/" + 
       format0(current_time.tm_mday) + "/" + 
-      format0(current_time.tm_year - 30), 
+      format0(current_time.tm_year%100), 
       screen_width/2, 
       screen_height/2 + 20
   ); //tm.Year starts is 0@1970, so +1970 then -2000 = -30

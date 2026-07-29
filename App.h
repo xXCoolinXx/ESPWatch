@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
+#include <TouchDrv.hpp>
 //#include "Kernel.h"
 
 class Kernel;
@@ -13,7 +14,7 @@ class App {
   virtual void _setup_sprites();
   public:
   App(Kernel* kernel);
-  virtual void run_code(double x, double y, bool special)=0;
+  virtual void run_code(const TouchPoints& tp)=0;
   virtual String get_name() = 0;
 };
 
@@ -32,7 +33,7 @@ class newApp : public App
   Kernel* kernel;
   public:
   newApp(Kernel* kernel);
-  void run_code(double x, double y, bool special);
+  void run_code(const TouchPoints& tp);
   String get_name();
 };
  * newApp.cpp
@@ -43,7 +44,7 @@ newApp::newApp(Kernel* kernel) : App(kernel) {
   this->kernel = kernel;
 }
 
-void newApp::run_code(double x, double y, bool special) {}
+void newApp::run_code(const TouchPoints* tp) {}
 
 String newApp::get_name() {
   return String("newApp");

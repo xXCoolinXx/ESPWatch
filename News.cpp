@@ -101,25 +101,31 @@ News::News(Kernel* kernel) : App(kernel) {
   this->news_sprite->setTextWrap(true);
 }
 
-void News::run_code(double x, double y, bool special) {
-  if(x != 0 && !this->last_x) {
-    if(x > 0) {
-      this->news_idx += 1;
-      updateNews();
-    } else if(this->news_idx > 1) {
-      this->news_idx -= 1;
-      updateNews();
-    } 
+void News::run_code(const TouchPoints& tp) {
+  // Slide left and right based on the active gesture
+  if(tp.hasGesture()) {
+    switch(tp.getGesture()) {
+      case Gesture::SWIPE_RIGHT:
+        if(this->news_idx > 1) {
+          this->news_idx -= 1;
+          updateNews();
+        }
+        break;
+      case Gesture::SWIPE_LEFT:
+        this->news_idx += 1;
+        updateNews();
+        break;
+      default:
+        // do nothing
+        break;
+    }
   }
-
+  
+  // Guards against empty news (I think)
   if(this->news_summary == "") {
     this->updateNews();
   }
   this->news_sprite->pushSprite(left_vb, top_vb);
-
-  if(x == 0) {
-    this->last_x = false;
-  }
 }
 
 String News::get_name() {

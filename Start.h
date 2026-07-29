@@ -32,7 +32,7 @@ class Start : public App {
   public:
   Start(Kernel* kernel);
   ~Start();
-  void run_code(double x, double y, bool special);
+  void run_code(const TouchPoints& tp);
   String get_name();
   
   void display_time();

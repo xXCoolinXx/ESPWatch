@@ -91,17 +91,16 @@ void Kernel::loopf() {
 
   clearOnce(); 
   
+  // Always draws the Analog watch on the screen
   this->drawAnalog();
+  
+  // Resets the cursor so stuff doesn't get fucked up
+  display.setCursor(0, 0);
+  display.setTextColor(WHITE);
+  
+  TouchPoints tp = this->touch.getTouchPoints();
 
-   display.setCursor(0, 0);
-   display.setTextColor(WHITE);
-
-  bool currentSpecial = false; //Place holder - no more special button :( //!digitalRead(SW); //Inverted because it is a pullup pin
-  current_app->run_code(
-      0.0,
-      0.0, //Placeholders for joystick - no more joystick :(
-    currentSpecial
-  );
+  current_app->run_code(tp);
 
   #ifdef DEBUG
   display.setCursor(0, display.height() - 7);
@@ -109,12 +108,8 @@ void Kernel::loopf() {
   display.print(String("FPS: ") + get_fps() + " ");
   display.print(digitalRead(boggle));
   #endif
-
-  // Serial.println((digitalRead(boggle) ? "true" : "false"));
   
   //display.fillScreen(BLACK); //REMOVE THIS LATER!
-  lastSpecial = currentSpecial;
-  checkBoggle();
 
   this->deltaTime = millis() - t_0;
   if (frame_times.size() == frame_count) {

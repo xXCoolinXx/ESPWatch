@@ -14,7 +14,7 @@ class News : public App
   public:
   News(Kernel* kernel);
   ~News();
-  void run_code(double x, double y, bool special);
+  void run_code(const TouchPoints& tp);
   String get_name();
 
   // Put it on the news scyeah
