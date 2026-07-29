@@ -1,0 +1,3 @@
+-DUSER_SETUP_LOADED=1
+-include User_Setups/Setup302_Waveshare_ESP32S3_GC9A01.h
+-DUSE_HSPI_PORT=1
