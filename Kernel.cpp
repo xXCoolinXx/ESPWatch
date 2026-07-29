@@ -33,7 +33,6 @@ void Kernel::init_touch() {
   touch.setPins(TP_RST, TP_INT);
 
   touch.setTouchDrvModel(TouchDrv_CST8XX);
-  Wire.begin(TP_SDA, TP_SCL);
   
   this->touch.begin(Wire, CST816_SLAVE_ADDRESS, TP_SDA, TP_SCL);  
 }
@@ -60,6 +59,8 @@ void Kernel::setup_display() {
 void Kernel::setupf() {
   Serial.begin(115200);
 
+  delay(100);                    // important on S3 USB-CDC
+  Serial.println("Reached Kernel::setupf");
   
   this->setup_display();
   this->init_touch();
@@ -129,7 +130,9 @@ float Kernel::get_fps() {
 }
 
 void Kernel::set_app(App* app) {
-  delete current_app;
+  if(current_app) {
+    delete current_app;
+  }
   current_app = app;
   // Serial.println((int)app);
   clearNext();

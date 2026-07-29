@@ -110,7 +110,7 @@ void Snake::run_code(double x, double y, bool special) {
 
     // Add part
     if(add_part) {
-      tail->next = new SnakePart{prev_tail, new_direction, nullptr};
+      tail->next = new SnakePart(prev_tail, new_direction, nullptr);
     }
 
     // Clear the tail from the screen

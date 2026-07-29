@@ -20,6 +20,9 @@ struct SnakePart {
   RectInt part = RectInt{center_x - center_x%snake_dim - snake_dim, center_y - center_y%snake_dim - snake_dim, snake_dim, snake_dim};
   SnakeDir dir = SNAKE_NONE;
   SnakePart* next = nullptr;
+
+  SnakePart(const RectInt& p = RectInt{center_x - center_x%snake_dim - snake_dim, center_y - center_y%snake_dim - snake_dim, snake_dim, snake_dim}, SnakeDir d = SNAKE_NONE, SnakePart* n = nullptr)
+  : part(p), dir(d), next(n) {}
 };
 
 class Snake : public App {
