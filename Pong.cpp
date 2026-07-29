@@ -47,11 +47,11 @@ void Pong::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) 
 
 void Pong::printScores() {
   kernel->display.setTextColor(TFT_RED, TFT_BLACK, true);
-  kernel->display.drawString(format0(this->comp_score), center_x - viewbox_wh / 4, top_vb + SCORE_Y);
+  kernel->display.drawString(format0(this->comp_score).c_str(), center_x - viewbox_wh / 4, top_vb + SCORE_Y);
 
   // kernel->display.setCursor(USER_SCORE_X, SCORE_Y);
   kernel->display.setTextColor(TFT_BLUE, TFT_BLACK, true);
-  kernel->display.drawString(format0(this->user_score), center_x + viewbox_wh / 4, top_vb + SCORE_Y);
+  kernel->display.drawString(format0(this->user_score).c_str(), center_x + viewbox_wh / 4, top_vb + SCORE_Y);
 }
 
 RectDouble Pong::user_move(const oPointInt& pt) {
@@ -60,7 +60,7 @@ RectDouble Pong::user_move(const oPointInt& pt) {
   // double fps_ratio = 80.00 / kernel->get_fps(); 
   // user_pad.y = min(, max(, ));
   
-  if(pt)
+  if(pt.has_value())
   { 
     user_pad.y = constrain( // Take the easy way out and just directly couple paddle movement to finger movement, TODO: Update this
         pt.value().y, 

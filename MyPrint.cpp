@@ -35,9 +35,10 @@ void clear_chars(short x, short y, short num_chars, TFT_eSPI* display) {
 }
 
 String format0(short number) {
-  if(number < 10) {
-    return String("0" + String(number));
-  } else {
-    return String(number);
+  if (number < 10) {
+    String s = "0";
+    s += number;
+    return s;
   }
+  return String(number);
 }

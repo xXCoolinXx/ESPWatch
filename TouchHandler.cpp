@@ -1,5 +1,6 @@
 #include "TouchHandler.hpp"
 #include <algorithm>
+#include "GFXConstants.h"
 
 namespace TouchHandler {
   bool swipe_helper(double rads, double axis_rads) {
@@ -48,13 +49,19 @@ namespace TouchHandler {
 
   std::tuple<oGesture, oPointInt> Handler::getTouchData() {
     oGesture gesture;
+    oPointInt ret_point = this->current_point; // Always return previous point to avoid issues with clearing 
 
     if(!this->_touch.available()) {
       return std::make_tuple(gesture, current_point);
     }
     
     data_struct tp = this->_touch.data;
-    PointInt pt = PointInt{tp.x, tp.y};
+    //     x=240
+    //y=0 <- | -> y=240
+    //      x=0
+    
+    // Swap around axes
+    PointInt pt = PointInt{tp.y, screen_height - tp.x};
 
     if(tp.event == Event::DOWN){
       this->resetPoints();
@@ -92,7 +99,7 @@ namespace TouchHandler {
       this->resetPoints();
     }
 
-    return std::make_tuple(gesture, this->current_point);
+    return std::make_tuple(gesture, ret_point);
   }
 
   void Handler::resetPoints() {

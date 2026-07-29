@@ -62,7 +62,7 @@ void Snake::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt)
         !(new_direction == SNAKE_UP && old_direction == SNAKE_DOWN) && !(new_direction == SNAKE_DOWN && old_direction == SNAKE_UP) ) {
         ptr->dir = old_direction;
       } else {
-        Serial.println("Snake dir is none!!!");
+        // Serial.println("Snake dir is none!!!");
       }
 
       switch(ptr->dir) {
