@@ -1,6 +1,7 @@
 // See SetupX_Template.h for all options available
 #define USER_SETUP_ID 302
 
+#define USE_HSPI_PORT
 #define GC9A01_DRIVER
 
 #define TFT_MISO 12
