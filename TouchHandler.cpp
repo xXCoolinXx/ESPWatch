@@ -33,7 +33,7 @@ namespace TouchHandler {
     return std::nullopt;
   }
 
-  oPointInt tapHandler(PointInt initial_point, PointInt final_point, unsigned long duration) {
+  oGesture tapHandler(PointInt initial_point, PointInt final_point, unsigned long duration) {
     PointInt v = final_point - initial_point;
     if(v.norm() < MAX_TAP_DISTANCE) {
       if(duration < MAX_TAP_DURATION) {
@@ -53,7 +53,7 @@ namespace TouchHandler {
       return std::make_tuple(gesture, current_point);
     }
     
-    data_struct tp = std::make_tuple(gesture, current_point);
+    data_struct tp = this->_touch.data;
     PointInt pt = PointInt{tp.x, tp.y};
 
     if(tp.event == Event::DOWN){

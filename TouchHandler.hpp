@@ -11,6 +11,7 @@
 #include <optional>
 #include <Shapes.h>
 #include <Wire.h>
+#include "Ports.h"
 
 typedef std::optional<PointInt> oPointInt;
 
@@ -34,7 +35,7 @@ namespace TouchHandler {
   typedef std::optional<TouchHandler::Gesture> oGesture;
 
   oGesture swipeHandler(PointInt initial_point, PointInt final_point);
-  oPointInt tapHandler(PointInt initial_point, PointInt final_point, unsigned long duration);
+  oGesture tapHandler(PointInt initial_point, PointInt final_point, unsigned long duration);
 
   enum Event {
     DOWN = 0,

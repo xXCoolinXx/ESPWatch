@@ -30,7 +30,6 @@ class Kernel {
   
   void setup_display();
   void init_wifi();
-  void init_touch();
 
   bool lastSpecial = false;
 

@@ -29,10 +29,6 @@ void Kernel::init_wifi() {
   }
 }
 
-void Kernel::init_touch() {
-  touch.begin();
-}
-
 Kernel::Kernel() : display(TFT_eSPI()) {
 }
 

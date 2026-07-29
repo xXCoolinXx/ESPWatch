@@ -1,5 +1,5 @@
-
-#pragma once
+#ifndef SHAPES_H
+#define SHAPES_H
 #include <cmath>
 struct PointDouble {
   public: 
@@ -137,3 +137,4 @@ struct CircleDouble {
     else { return NO_POINT; }
   }
 };
+#endif

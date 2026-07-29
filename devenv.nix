@@ -1,7 +1,7 @@
 { pkgs, lib, config, inputs, ... }:
 
 let 
-  defaultPort = "/dev/ttyACM0";
+  defaultPort = "/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B14072232-if00";
   buildDir = "./.devenv/build";
 in
 {
