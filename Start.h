@@ -19,7 +19,6 @@ class Start : public App {
     double last_x = -10.0;
     double last_y = -10.0;
     bool showTime = true;
-    PointInt Cursor = PointInt{0, 0};
 
     RectInt app_rects[ROWS][COLS];
     void _setup_sprites();
@@ -39,6 +38,5 @@ class Start : public App {
   void display_cursor();
   void displayApps();
   
-  void move_cursor(double x, double y);
-  void checkPress(bool special);
+  void checkPress(const PointInt& pt);
 };

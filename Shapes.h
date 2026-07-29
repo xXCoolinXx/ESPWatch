@@ -26,6 +26,8 @@ struct RectInt {
   int width;
   int height;
 
+  RectInt(int x, int y, int width, int height) : x(x), y(y), width(width), height(height) {}
+
   bool contains(const PointInt p) const {
     return (x <= p.x and p.x <= (x+width)) and (y <= p.y and p.y <= (y + height));
   }

@@ -13,7 +13,6 @@
 
 Start::Start(Kernel* kernel) : App(kernel) {
   this->kernel = kernel;
-  // Cursor = RectDouble{kernel->display.width() / 2, kernel->display.height() / 2, 4, 4};
   this->_setup_sprites();
 
   int width = OUTLINE_DIM*COLS + APP_SPACING_X*(COLS - 1);
@@ -43,60 +42,20 @@ Start::~Start() {
 void Start::_setup_sprites() {
   make_sprite(pong, &(this->kernel->display), APP_DIM, APP_DIM, pong18);
   make_sprite(snake, &(this->kernel->display), APP_DIM, APP_DIM, snake18);
-  // make_sprite(cursor, &(this->kernel->display), ursor.width, Cursor.height, cursor_bmp);
-}
-
-void Start::move_cursor(double x, double y) {
-  if(!this->showTime) {
-    kernel->display.drawRoundRect(
-      app_rects[this->Cursor.y][this->Cursor.x].x - OUTLINE_APP_DIF - 1, 
-      app_rects[this->Cursor.y][this->Cursor.x].y - OUTLINE_APP_DIF - 1, 
-      app_rects[this->Cursor.y][this->Cursor.x].width + 2, 
-      app_rects[this->Cursor.y][this->Cursor.x].height + 2,
-      1, 
-      TFT_BLACK
-    );
-  }
-
-  if(x != 0 && (this->last_x == 0.0 || this->last_x == -10.0)) {
-    Cursor.x += (x > 0 ? 1 : -1);
-    Cursor.x = (Cursor.x % COLS + COLS) % COLS;
-  }
-  if(y != 0 && (this->last_y == 0.0 || this->last_y == -10.0)) {
-    Cursor.y += (y > 0 ? 1 : -1);
-    Cursor.y = (Cursor.y % ROWS + ROWS) % ROWS;
-  }
-
-  if(!this->showTime) {
-    kernel->display.drawRoundRect(
-      app_rects[this->Cursor.y][this->Cursor.x].x - OUTLINE_APP_DIF - 1, 
-      app_rects[this->Cursor.y][this->Cursor.x].y - OUTLINE_APP_DIF - 1, 
-      app_rects[this->Cursor.y][this->Cursor.x].width + 2, 
-      app_rects[this->Cursor.y][this->Cursor.x].height + 2,
-      1, 
-      TFT_WHITE
-    );
-  }
-}
-
-void Start::display_cursor() {
-  // this->cursor->pushSprite(lastCursor.x, lastCursor.y);
-  // kernel->display.drawBitmap(lastCursor.x, lastCursor.y, cursor, lastCursor.width, lastCursor.height, (lastCursor.y >= 8) ? BLACK : WHITE);
-  // kernel->display.drawBitmap(    Cursor.x,     Cursor.y, cursor,     Cursor.width,     Cursor.height, (    Cursor.y >= 8) ? WHITE : BLACK);
 }
 
 void Start::run_code(const TouchPoints& tp) {
-  // Serial.println(x,y);
-  // move_cursor(x, y);
-  // checkPress(special);
-
-  // display_cursor();
-
-  //Swap from showing Time to Apps or vice versa
-  if(y != 0 && (this->last_y == 0.0 || this->last_y == -10.0)) {
-    if(this->showTime || (y < 0 && Cursor.y == 0) || (y > 0 && Cursor.y == ROWS - 1)) {
+  // Toggle app view vs digital clock view on tap
+  if(tp.hasGesture() && tp.getGesture() == Gesture::TAP && tp.hasPoints()) {
+    TouchPoint touchpoint = tp.getPoint(0); // Get the point of the first finger press (we don't care about multi-finger for this)
+    PointInt pt = PointInt{touchpoint.x, touchpoint.y};
+    bool in_viewbox = viewbox_rect.contains(pt);
+    
+    if(this->showTime || !in_viewbox) { 
       this->showTime = ! this->showTime;
       kernel->clearViewBox();
+    } else if(in_viewbox) {
+      this->checkPress(pt);
     }
   }
 
@@ -104,31 +63,23 @@ void Start::run_code(const TouchPoints& tp) {
     this->display_time();
   } else {
     this->displayApps();
-    this->checkPress(special);
-    this->move_cursor(x, y);
   }
-
-  // Serial.println((special ? "true" : "false"));
-
-  last_x = x;
-  last_y = y;
 }
 
 String Start::get_name() {
   return String("Start");
 }
 
-void Start::checkPress(bool special) {
-  if (special) {
-    if(this->Cursor.x == 0 && this->Cursor.y == 0) {
-      Serial.println("selecting pong");
-      kernel->set_app(new Pong(kernel)); 
-    } else if (this->Cursor.x == 1 && this->Cursor.y == 0) {
-      Serial.println("selecting snake");
-      kernel->set_app(new Snake(kernel));
-    } else if (this->Cursor.x == 2 && this->Cursor.y == 0) {
-      kernel->set_app(new News(kernel));
-    }
+void Start::checkPress(const PointInt& pt) {
+  if(app_rects[0][0].contains(pt)) {
+    Serial.println("selecting pong");
+    kernel->set_app(new Pong(kernel)); 
+  } else if(app_rects[0][1].contains(pt)) {
+    Serial.println("selecting snake");
+    kernel->set_app(new Snake(kernel)); 
+  } else if (app_rects[0][2].contains(pt)) {
+    Serial.println("selecting news");
+    kernel->set_app(new News(kernel));
   }
 }
 
