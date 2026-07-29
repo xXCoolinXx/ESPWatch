@@ -1,19 +1,19 @@
 #include "Snake.h"
 #include "Kernel.h"
 
-SnakeDir Snake::getDirFromTouch(const TouchPoints& tp) {
-  if(tp.hasPoints()) {
-    switch(tp.getGesture()) {
-      case Gesture::SWIPE_UP:
+SnakeDir Snake::getDirFromTouch(const data_struct& tp) {
+  if(true) {
+    switch(tp.gestureID) {
+      case GESTURE::SWIPE_UP:
         return SNAKE_UP;
         break;
-      case Gesture::SWIPE_DOWN:
+      case GESTURE::SWIPE_DOWN:
         return SNAKE_DOWN;
         break;
-      case Gesture::SWIPE_LEFT:
+      case GESTURE::SWIPE_LEFT:
         return SNAKE_LEFT;
         break;
-      case Gesture::SWIPE_RIGHT:
+      case GESTURE::SWIPE_RIGHT:
         return SNAKE_RIGHT;
         break;
       default:
@@ -31,7 +31,7 @@ Snake::Snake(Kernel* kernel) : App(kernel) {
   this->move_apple();
 }
 
-void Snake::run_code(const TouchPoints& tp) {
+void Snake::run_code(const data_struct& tp) {
   this->kernel->drawViewBox();
 
   time_since_last_move += this->kernel->getDeltaTime();

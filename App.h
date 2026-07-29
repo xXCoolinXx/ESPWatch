@@ -3,9 +3,8 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
-#include <TouchDrv.hpp>
 //#include "Kernel.h"
-
+#include <CST816S.h>
 class Kernel;
 
 //Common framework for apps so that Kernel can call them easily
@@ -14,7 +13,7 @@ class App {
   virtual void _setup_sprites();
   public:
   App(Kernel* kernel);
-  virtual void run_code(const TouchPoints& tp)=0;
+  virtual void run_code(const data_struct& tp)=0;
   virtual String get_name() = 0;
 };
 
@@ -33,7 +32,7 @@ class newApp : public App
   Kernel* kernel;
   public:
   newApp(Kernel* kernel);
-  void run_code(const TouchPoints& tp);
+  void run_code(const data_struct& tp);
   String get_name();
 };
  * newApp.cpp
@@ -44,7 +43,7 @@ newApp::newApp(Kernel* kernel) : App(kernel) {
   this->kernel = kernel;
 }
 
-void newApp::run_code(const TouchPoints* tp) {}
+void newApp::run_code(const data_struct* tp) {}
 
 String newApp::get_name() {
   return String("newApp");

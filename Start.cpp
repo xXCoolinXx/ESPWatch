@@ -44,11 +44,10 @@ void Start::_setup_sprites() {
   make_sprite(snake, &(this->kernel->display), APP_DIM, APP_DIM, snake18);
 }
 
-void Start::run_code(const TouchPoints& tp) {
+void Start::run_code(const data_struct& tp) {
   // Toggle app view vs digital clock view on tap
-  if(tp.hasGesture() && tp.getGesture() == Gesture::TAP && tp.hasPoints()) {
-    TouchPoint touchpoint = tp.getPoint(0); // Get the point of the first finger press (we don't care about multi-finger for this)
-    PointInt pt = PointInt{touchpoint.x, touchpoint.y};
+  if(tp.gestureID == GESTURE::LONG_PRESS) {
+    PointInt pt = PointInt{tp.x, tp.y};
     bool in_viewbox = viewbox_rect.contains(pt);
     
     if(this->showTime || !in_viewbox) { 

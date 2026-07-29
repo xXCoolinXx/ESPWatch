@@ -34,10 +34,10 @@ class Snake : public App {
   public:
   Snake(Kernel* kernel);
   ~Snake();
-  void run_code(const TouchPoints& tp);
+  void run_code(const data_struct& tp);
   void delete_snake();
 
-  SnakeDir getDirFromTouch(const TouchPoints& tp);
+  SnakeDir getDirFromTouch(const data_struct& tp);
 
   void move_apple();
 

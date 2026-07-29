@@ -31,7 +31,7 @@ class Start : public App {
   public:
   Start(Kernel* kernel);
   ~Start();
-  void run_code(const TouchPoints& tp);
+  void run_code(const data_struct& tp);
   String get_name();
   
   void display_time();

@@ -30,11 +30,7 @@ void Kernel::init_wifi() {
 }
 
 void Kernel::init_touch() {
-  touch.setPins(TP_RST, TP_INT);
-
-  touch.setTouchDrvModel(TouchDrv_CST8XX);
-  
-  this->touch.begin(Wire, CST816_SLAVE_ADDRESS, TP_SDA, TP_SCL);  
+  touch.begin();
 }
 
 Kernel::Kernel() : display(TFT_eSPI()) {
@@ -59,7 +55,6 @@ void Kernel::setup_display() {
 void Kernel::setupf() {
   Serial.begin(115200);
 
-  delay(100);                    // important on S3 USB-CDC
   Serial.println("Reached Kernel::setupf");
   
   this->setup_display();
@@ -84,6 +79,20 @@ void Kernel::setupf() {
   Serial.println("Finished setup");
 }
 
+data_struct Kernel::getTouchData() {
+  if(this->touch.available()) {
+    return this->touch.data;
+  } else {
+    return {
+      .gestureID = GESTURE::NONE,
+      .points = 0,
+      .event = 0,
+      .x = -1,
+      .y = -1,
+    };
+  }
+}
+
 void Kernel::loopf() {
   long t_0 = millis();
   
@@ -97,8 +106,11 @@ void Kernel::loopf() {
   // Resets the cursor so stuff doesn't get fucked up
   display.setCursor(0, 0);
   display.setTextColor(WHITE);
-  
-  TouchPoints tp = this->touch.getTouchPoints();
+    
+  data_struct tp = this->getTouchData();
+  if(touch.available()) {
+    Serial.println("You got tapped - " + touch.gesture());
+  } 
 
   current_app->run_code(tp);
 
@@ -131,16 +143,6 @@ void Kernel::set_app(App* app) {
   current_app = app;
   // Serial.println((int)app);
   clearNext();
-}
-
-bool Kernel::getLastSpecial() {
-  return lastSpecial;
-}
-
-void Kernel::checkBoggle() {
-  if(!digitalRead(boggle) && current_app->get_name() != "Start") {
-    set_app(new Start(this));
-  }
 }
 
 void Kernel::clearNext() {

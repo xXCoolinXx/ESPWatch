@@ -29,9 +29,9 @@ class Pong : public App {
   Kernel* kernel;
   public:
     Pong(Kernel* kernel);
-    void run_code(const TouchPoints& tp);
+    void run_code(const data_struct& tp);
     String get_name();
-    RectDouble user_move(const TouchPoints& tp);    
+    RectDouble user_move(const data_struct& tp);    
     RectDouble comp_move();
     RectDouble ball_move();
     void reset_ball();
