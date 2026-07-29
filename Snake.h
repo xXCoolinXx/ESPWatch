@@ -13,8 +13,6 @@ const unsigned short snake_dim = 5; // Given current viewbox_wh, this gives a 25
 const double spm = 1.5; // Seconds per move (0.5 -> move twice in one second)
 const int border_space = 1; // Spacing between apple and border when generating 
 
-SnakeDir getdirFromJoystick(double x, double y);
-
 // Linkeduhlist
 struct SnakePart {
   RectInt part = RectInt{center_x - center_x%snake_dim - snake_dim, center_y - center_y%snake_dim - snake_dim, snake_dim, snake_dim};
@@ -32,9 +30,6 @@ class Snake : public App {
 
   RectInt apple = RectInt{0, 0, snake_dim, snake_dim};
 
-  bool last_x = false; 
-  bool last_y = false;
-
   double time_since_last_move = 0.0;
   public:
   Snake(Kernel* kernel);
@@ -42,7 +37,7 @@ class Snake : public App {
   void run_code(const TouchPoints& tp);
   void delete_snake();
 
-  SnakeDir getdirFromJoystick(double x, double y);
+  SnakeDir getDirFromTouch(const TouchPoints& tp);
 
   void move_apple();
 

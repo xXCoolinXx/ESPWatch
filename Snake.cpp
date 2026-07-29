@@ -1,26 +1,26 @@
 #include "Snake.h"
 #include "Kernel.h"
 
-SnakeDir Snake::getdirFromJoystick(double x, double y) {
-  // Since we are using a joystick yet can only go one direction at a time, choose based on the higher value
-  if(x == 0 && y == 0) { return SNAKE_NONE; }
-  
-  if(x != 0 && y != 0) {
-    if(abs(x) > abs(y)) {
-      y = 0;
-    } else {
-      x = 0;
+SnakeDir Snake::getDirFromTouch(const TouchPoints& tp) {
+  if(tp.hasPoints()) {
+    switch(tp.getGesture()) {
+      case Gesture::SWIPE_UP:
+        return SNAKE_UP;
+        break;
+      case Gesture::SWIPE_DOWN:
+        return SNAKE_DOWN;
+        break;
+      case Gesture::SWIPE_LEFT:
+        return SNAKE_LEFT;
+        break;
+      case Gesture::SWIPE_RIGHT:
+        return SNAKE_RIGHT;
+        break;
+      default:
+        return SNAKE_NONE;
+        break;
     }
   }
-
-  if(x != 0) { // and !this->last_x) {
-    return (x < 0 ? SNAKE_LEFT : SNAKE_RIGHT );
-  }
-
-  if(y != 0) {// and !this->last_y) {
-    return (y > 0 ? SNAKE_DOWN : SNAKE_UP );
-  }
-
   return SNAKE_NONE;
 }
 
@@ -44,7 +44,7 @@ void Snake::run_code(const TouchPoints& tp) {
     
     this->kernel->display.fillRect(this->apple.x, this->apple.y, this->apple.width, this->apple.height, TFT_RED);
 
-    SnakeDir new_direction = getdirFromJoystick(x, y);
+    SnakeDir new_direction = this->getDirFromTouch(tp);
 
     bool add_part = false;
     RectInt prev_tail;
@@ -122,14 +122,11 @@ void Snake::run_code(const TouchPoints& tp) {
       this->kernel->display.fillRect(prev_tail.x, prev_tail.y, prev_tail.width, prev_tail.height, TFT_BLACK);
       
     }
-
-    this->last_x = x != 0;
-    this->last_y = y != 0;
   }
 }
 
 String Snake::get_name() {
-  return String("newApp");
+  return String("Snake");
 }
 
 void Snake::delete_snake() {
