@@ -2,7 +2,7 @@
 #include "Kernel.h"
 
 SnakeDir Snake::getDirFromTouch(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
-  if(gesture) {
+  if(gesture.has_value()) {
     switch(gesture.value()) {
       case TouchHandler::Gesture::SWIPE_UP:
         return SNAKE_UP;

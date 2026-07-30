@@ -17,9 +17,9 @@ typedef std::optional<PointInt> oPointInt;
 
 namespace TouchHandler {
   const unsigned long TOUCH_TIMEOUT = 150;
-  const double MIN_SWIPE_DISTANCE = 20.0;
-  const double MAX_SWIPE_ANGLE_FROM_AXIS = 2 * M_PI / 3; // 30 degrees
-  const int MAX_TAP_DISTANCE = 10;
+  const double MIN_SWIPE_DISTANCE = 10.0;
+  const double MAX_SWIPE_ANGLE_FROM_AXIS = M_PI / 6.0; // 30 degrees
+  const int MAX_TAP_DISTANCE = 5;
   const unsigned long MAX_TAP_DURATION = 300;
   const unsigned long MIN_LONG_PRESS_DURATION = 1000;
 

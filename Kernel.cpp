@@ -114,9 +114,9 @@ void Kernel::loopf() {
     }
   }
 
-  if(current_point.has_value()) {
-    Serial.println("x: " + String(current_point.value().x) + " y: " + String(current_point.value().y));
-  }
+  // if(current_point.has_value()) {
+  //   Serial.println("x: " + String(current_point.value().x) + " y: " + String(current_point.value().y));
+  // }
   
   current_app->run_code(gesture, current_point);
 

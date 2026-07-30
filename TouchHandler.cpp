@@ -16,7 +16,7 @@ namespace TouchHandler {
       return std::nullopt;
     }  
 
-    double rads = std::atan2((double)v.y, (double)v.x);
+    double rads = std::atan2(-1.0 * v.y, (double)v.x);
     if(rads < 0) {
       rads += 2 * M_PI;  
     }
@@ -27,7 +27,7 @@ namespace TouchHandler {
       return Gesture::SWIPE_LEFT;
     } else if(swipe_helper(rads, 3 * M_PI / 2)) {
       return Gesture::SWIPE_DOWN;
-    } else if(swipe_helper(rads, 0)) {
+    } else if(swipe_helper(rads, 0) || swipe_helper(rads, 2 * M_PI)) {
       return Gesture::SWIPE_RIGHT;
     }
 
