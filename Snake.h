@@ -31,6 +31,8 @@ class Snake : public App {
   RectInt apple = RectInt{0, 0, snake_dim, snake_dim};
 
   double time_since_last_move = 0.0;
+
+  TouchHandler::oGesture cached_gesture;
   public:
   Snake(Kernel* kernel);
   ~Snake();

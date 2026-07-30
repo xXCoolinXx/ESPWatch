@@ -38,13 +38,19 @@ void Snake::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt)
   
   this->kernel->display.setTextColor(TFT_WHITE, TFT_BLACK, true);
   // this->kernel->display.drawString(String(time_since_last_move), 50, 50);
+  
+  // Cache the gesture for the next loop update
+  if (!this->cached_gesture.has_value()) {
+    this->cached_gesture = gesture;
+  }
 
   if(time_since_last_move >= spm) {
     time_since_last_move -= spm;
     
     this->kernel->display.fillRect(this->apple.x, this->apple.y, this->apple.width, this->apple.height, TFT_RED);
 
-    SnakeDir new_direction = this->getDirFromTouch(gesture, pt);
+    SnakeDir new_direction = this->getDirFromTouch(this->cached_gesture, pt);
+    this->cached_gesture.reset(); // Reset the cache
 
     bool add_part = false;
     RectInt prev_tail;
@@ -97,6 +103,7 @@ void Snake::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt)
         this->kernel->clearNext();
         this->move_apple();
         this->head = new SnakePart;
+        this->cached_gesture.reset();
         break;
       }
 
