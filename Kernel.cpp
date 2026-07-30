@@ -147,28 +147,32 @@ void Kernel::loopf() {
     
   auto [gesture, current_point] = this->touch.getTouchData();
   
-  if(gesture) {
-    switch(gesture.value()) {
-      case TouchHandler::Gesture::TAP:
-        Serial.println("Get tapped");
-        break;
-      case TouchHandler::Gesture::SWIPE_UP:
-        Serial.println("Swipe up");
-        break;
-      case TouchHandler::Gesture::SWIPE_DOWN:
-        Serial.println("Swipe down");
-        break;
-      case TouchHandler::Gesture::SWIPE_LEFT:
-        Serial.println("Swipe left");
-        break;
-      case TouchHandler::Gesture::SWIPE_RIGHT:
-        Serial.println("Swipe right");
-        break;
-      case TouchHandler::Gesture::LONG_PRESS:
-        Serial.println("Long press");
-        break;
-    }
+  if(gesture.has_value() && gesture.value() == TouchHandler::Gesture::DOWN_SLASH) {
+    set_app(new Start(this));
   }
+  //
+  // if(gesture) {
+  //   switch(gesture.value()) {
+  //     case TouchHandler::Gesture::TAP:
+  //       Serial.println("Get tapped");
+  //       break;
+  //     case TouchHandler::Gesture::SWIPE_UP:
+  //       Serial.println("Swipe up");
+  //       break;
+  //     case TouchHandler::Gesture::SWIPE_DOWN:
+  //       Serial.println("Swipe down");
+  //       break;
+  //     case TouchHandler::Gesture::SWIPE_LEFT:
+  //       Serial.println("Swipe left");
+  //       break;
+  //     case TouchHandler::Gesture::SWIPE_RIGHT:
+  //       Serial.println("Swipe right");
+  //       break;
+  //     case TouchHandler::Gesture::LONG_PRESS:
+  //       Serial.println("Long press");
+  //       break;
+  //   }
+  // }
 
   // if(current_point.has_value()) {
   //   Serial.println("x: " + String(current_point.value().x) + " y: " + String(current_point.value().y));

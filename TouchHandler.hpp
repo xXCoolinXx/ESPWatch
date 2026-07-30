@@ -22,6 +22,7 @@ namespace TouchHandler {
   const int MAX_TAP_DISTANCE = 5;
   const unsigned long MAX_TAP_DURATION = 300;
   const unsigned long MIN_LONG_PRESS_DURATION = 1000;
+  const int DOWN_SLASH_ZONE_WIDTH = 50;
 
   enum Gesture {
     SWIPE_UP,
@@ -30,6 +31,7 @@ namespace TouchHandler {
     SWIPE_RIGHT,
     TAP, 
     LONG_PRESS,
+    DOWN_SLASH
   };
 
   typedef std::optional<TouchHandler::Gesture> oGesture;

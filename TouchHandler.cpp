@@ -26,6 +26,10 @@ namespace TouchHandler {
     } else if(swipe_helper(rads, M_PI)) {
       return Gesture::SWIPE_LEFT;
     } else if(swipe_helper(rads, 3 * M_PI / 2)) {
+      if(final_point.y > screen_height - DOWN_SLASH_ZONE_WIDTH && initial_point.y < DOWN_SLASH_ZONE_WIDTH) {
+        return Gesture::DOWN_SLASH;
+      }
+
       return Gesture::SWIPE_DOWN;
     } else if(swipe_helper(rads, 0) || swipe_helper(rads, 2 * M_PI)) {
       return Gesture::SWIPE_RIGHT;
