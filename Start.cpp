@@ -107,7 +107,7 @@ void Start::display_time() {
   kernel->display.drawString(
     std::to_string(kernel->getPodometerCount()).c_str(),
     screen_width/2,
-    screen_height/2 + 60;
+    screen_height/2 + 60
   );
 }
 
