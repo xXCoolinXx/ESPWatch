@@ -24,6 +24,11 @@
 class App;
 class ClockDaemon;
 
+const float STEP_THRESHOLD = 1.25f;  // Trigger threshold in Gs (1.0 = resting gravity)
+const float HYSTERESIS = 0.15f;       // Reset threshold band below peak
+const float ALPHA = 0.25f;            // Low-pass filter factor (smooths noise)
+const unsigned long MIN_STEP_MS = 280;
+
 class Kernel {
   private:
   App* current_app = nullptr;
@@ -44,6 +49,11 @@ class Kernel {
   double prev_a_min = -1.0;
 
   unsigned long deltaTime = 0;
+
+  float filteredMagnitude = 1.0;
+  unsigned long stepCount = 0;
+  bool peakDetected = false;
+  unsigned long lastStepTime = 0;
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
   ClockDaemon* _clock = nullptr;
@@ -73,6 +83,7 @@ class Kernel {
 
   double getBatteryLevel();
   int getPodometerCount();
+  void loop_podometer();
 
   double getDeltaTime();
 };

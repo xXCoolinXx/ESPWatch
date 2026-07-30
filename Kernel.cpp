@@ -37,8 +37,50 @@ void Kernel::setup_qmi() {
 
   qmi.configAccelerometer(SensorQMI8658::ACC_RANGE_4G, SensorQMI8658::ACC_ODR_62_5Hz);
   qmi.enableAccelerometer();
+  
+  qmi.configPedometer(
+        50,   // ped_sample_cnt: Window sample count
+        200,  // ped_peak2peak:  Peak-to-peak threshold
+        100,  // ped_peak:       Peak detection threshold
+        200,  // ped_time_up:    Max time for step up-slope (ms)
+        20,   // ped_time_low:   Min time between steps (ms)
+        10,   // ped_entry_cnt:  Initial step requirement before counting starts (e.g. 10 steps)
+        0,    // ped_precision:  Precision level
+        4     // ped_sig_count:  Update output register every N steps
+  );
+
   qmi.enablePedometer();
   qmi.clearPedometerCounter();
+}
+
+void Kernel::loop_podometer() {
+  if (qmi.getDataReady()) {
+        IMUdata accel;
+        qmi.getAccelerometer(accel.x, accel.y, accel.z);
+
+        // 1. Calculate vector magnitude (independent of board orientation)
+        float rawMagnitude = sqrt(accel.x * accel.x + accel.y * accel.y + accel.z * accel.z);
+
+        // 2. Low-pass filter to smooth out high-frequency noise
+        filteredMagnitude = (ALPHA * rawMagnitude) + ((1.0f - ALPHA) * filteredMagnitude);
+
+        // 3. Peak detection
+        unsigned long now = millis();
+        if (filteredMagnitude > STEP_THRESHOLD && !peakDetected) {
+            if (now - lastStepTime > MIN_STEP_MS) {
+                stepCount++;
+                lastStepTime = now;
+                peakDetected = true;
+                
+                Serial.print("Step Count: ");
+                Serial.println(stepCount);
+            }
+        } 
+        // Reset peak flag when acceleration drops back down
+        else if (filteredMagnitude < (STEP_THRESHOLD - HYSTERESIS)) {
+            peakDetected = false;
+        }
+    }
 }
 
 Kernel::Kernel() : display(TFT_eSPI()) {
@@ -68,6 +110,7 @@ void Kernel::setupf() {
   this->setup_display();
   this->touch.init();
   this->init_wifi();
+  this->setup_qmi();
   Serial.println("Setting up display works!");
   // LittleFS.begin();  
   // pinMode(SW, INPUT_PULLUP);
@@ -91,6 +134,7 @@ void Kernel::loopf() {
   long t_0 = millis();
   
   _clock->loopf();
+  this->loop_podometer();
 
   clearOnce(); 
   
@@ -239,7 +283,7 @@ double Kernel::getBatteryLevel() {
 }
 
 int Kernel::getPodometerCount() {
-  return this->qmi.getPedometerCounter();
+  return this->stepCount;
 }
 
 double Kernel::getDeltaTime() {
