@@ -42,6 +42,7 @@ Start::~Start() {
 void Start::_setup_sprites() {
   make_sprite(pong, &(this->kernel->display), APP_DIM, APP_DIM, pong18);
   make_sprite(snake, &(this->kernel->display), APP_DIM, APP_DIM, snake18);
+  make_sprite(news, &(this->kernel->display), APP_DIM, APP_DIM, news18);
 }
 
 void Start::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
@@ -96,6 +97,18 @@ void Start::display_time() {
       screen_width/2, 
       screen_height/2 + 20
   ); //tm.Year starts is 0@1970, so +1970 then -2000 = -30
+  
+  kernel->display.drawString(
+    std::to_string(kernel->getBatteryLevel()).c_str(),
+    screen_width/2,
+    screen_height/2 + 40
+  );
+
+  kernel->display.drawString(
+    std::to_string(kernel->getPodometerCount()).c_str(),
+    screen_width/2,
+    screen_height/2 + 60;
+  );
 }
 
 void Start::displayApps() {
@@ -104,6 +117,8 @@ void Start::displayApps() {
 
   //Snake
   this->snake->pushSprite(app_rects[0][1].x, app_rects[0][1].y);
+
+  this->news->pushSprite(app_rects[0][2].x, app_rects[0][2].y);
 
   for(int i = 0; i < ROWS; i++) {
     for(int j = 0; j < COLS; j++) {

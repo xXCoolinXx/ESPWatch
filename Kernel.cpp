@@ -29,6 +29,18 @@ void Kernel::init_wifi() {
   }
 }
 
+void Kernel::setup_qmi() {
+  if(!this->qmi.begin(Wire, QMI8658_L_SLAVE_ADDRESS, TP_SDA, TP_SCL)) {
+    Serial.println("Woops, accelerometer didn't start :(");
+    return; 
+  }
+
+  qmi.configAccelerometer(SensorQMI8658::ACC_RANGE_4G, SensorQMI8658::ACC_ODR_62_5Hz);
+  qmi.enableAccelerometer();
+  qmi.enablePedometer();
+  qmi.clearPedometerCounter();
+}
+
 Kernel::Kernel() : display(TFT_eSPI()) {
 }
 
@@ -220,6 +232,14 @@ void Kernel::clearViewBox(uint16_t bg) {
 
 void Kernel::drawViewBox(uint16_t border) {
   this->display.drawRect(left_vb, top_vb, viewbox_wh, viewbox_wh, border);
+}
+
+double Kernel::getBatteryLevel() {
+  return analogReadMilliVolts(BAT_ADC_PIN) * 3.3f / (1 << 12) * 3;
+}
+
+int Kernel::getPodometerCount() {
+  return this->qmi.getPedometerCounter();
 }
 
 double Kernel::getDeltaTime() {

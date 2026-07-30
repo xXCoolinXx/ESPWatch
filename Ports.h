@@ -23,3 +23,5 @@ const int TP_SDA = 6;
 const int TP_SCL = 7;
 const int TP_INT = 5;
 const int TP_RST = 13;
+
+const int BAT_ADC_PIN = 1;

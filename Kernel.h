@@ -15,6 +15,7 @@
 #include "GFXConstants.h"
 #include "Ports.h"
 #include "TouchHandler.hpp"
+#include <SensorQMI8658.hpp>
 
 // The font names are arrays references, thus must NOT be in quotes ""
 #define AA_FONT_SMALL NotoSansBold15
@@ -30,7 +31,8 @@ class Kernel {
   
   void setup_display();
   void init_wifi();
-
+  void setup_qmi();
+  
   bool lastSpecial = false;
 
   bool clear_screen = false;
@@ -46,6 +48,7 @@ class Kernel {
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
   ClockDaemon* _clock = nullptr;
   TouchHandler::Handler touch;
+  SensorQMI8658 qmi;  
 
   Kernel();
   
@@ -67,6 +70,9 @@ class Kernel {
   void clearViewBox(uint16_t bg = TFT_BLACK); //Clear the square where programs besides the analog clock run
 
   void drawViewBox(uint16_t border=TFT_WHITE);
+
+  double getBatteryLevel();
+  int getPodometerCount();
 
   double getDeltaTime();
 };

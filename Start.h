@@ -26,6 +26,7 @@ class Start : public App {
     // Apps
     TFT_eSprite* pong = nullptr;
     TFT_eSprite* snake = nullptr;
+    TFT_eSprite* news = nullptr;
 
     // TFT_eSprite* cursor = nullptr;
   public:
