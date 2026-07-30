@@ -95,19 +95,19 @@ void Start::display_time() {
       format0(current_time.tm_mday) + "/" + 
       format0(current_time.tm_year%100), 
       screen_width/2, 
-      screen_height/2 + 20
+      screen_height/2 - 40
   ); //tm.Year starts is 0@1970, so +1970 then -2000 = -30
   
   kernel->display.drawString(
     std::to_string(kernel->getBatteryLevel()).c_str(),
     screen_width/2,
-    screen_height/2 + 40
+    screen_height/2 + 20
   );
 
   kernel->display.drawString(
     std::to_string(kernel->getPodometerCount()).c_str(),
     screen_width/2,
-    screen_height/2 + 60
+    screen_height/2 + 40
   );
 }
 
