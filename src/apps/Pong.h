@@ -28,9 +28,8 @@ class Pong : public App {
   int user_score = 0;
   int comp_score = 0;
 
-  Kernel* kernel;
   public:
-    Pong(Kernel* kernel);
+    Pong(Kernel& kernel);
     void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
     String get_name();
     RectDouble user_move(const oPointInt& pt);    

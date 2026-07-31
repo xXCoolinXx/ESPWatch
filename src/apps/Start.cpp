@@ -4,15 +4,12 @@
 #include "src/utils/MyPrint.h"
 // #include "Clock.h"
 #include "src/assets/Images.h"
-#include "src/apps/Pong.h"
-#include "src/apps/Snake.h"
-#include "src/apps/News.h"
 #include <cmath>
+#include <string>
 
 //smaller windows like cursor
 
-Start::Start(Kernel* kernel) : App(kernel) {
-  this->kernel = kernel;
+Start::Start(Kernel& kernel) : App(kernel) {
   this->_setup_sprites();
 
   int width = OUTLINE_DIM*COLS + APP_SPACING_X*(COLS - 1);
@@ -33,16 +30,10 @@ Start::Start(Kernel* kernel) : App(kernel) {
   }
 }
 
-Start::~Start() {
-  delete pong;
-  delete snake;
-  // delete cursor;
-}
-
 void Start::_setup_sprites() {
-  make_sprite(pong, &(this->kernel->display), APP_DIM, APP_DIM, pong18);
-  make_sprite(snake, &(this->kernel->display), APP_DIM, APP_DIM, snake18);
-  make_sprite(news, &(this->kernel->display), APP_DIM, APP_DIM, news18);
+  pong  = make_sprite(&(this->kernel.display), APP_DIM, APP_DIM, pong18);
+  snake = make_sprite(&(this->kernel.display), APP_DIM, APP_DIM, snake18);
+  news  = make_sprite(&(this->kernel.display), APP_DIM, APP_DIM, news18);
 }
 
 void Start::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
@@ -52,7 +43,7 @@ void Start::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt)
     
     if(this->showTime || !in_viewbox) { 
       this->showTime = ! this->showTime;
-      kernel->clearViewBox();
+      kernel.clearViewBox();
     } else if(in_viewbox) {
       this->checkPress(pt.value());
     }
@@ -72,25 +63,25 @@ String Start::get_name() {
 void Start::checkPress(const PointInt& pt) {
   if(app_rects[0][0].contains(pt)) {
     Serial.println("selecting pong");
-    kernel->set_app(new Pong(kernel)); 
+    kernel.request_app(AppId::PONG);
   } else if(app_rects[0][1].contains(pt)) {
     Serial.println("selecting snake");
-    kernel->set_app(new Snake(kernel)); 
+    kernel.request_app(AppId::SNAKE);
   } else if (app_rects[0][2].contains(pt)) {
     Serial.println("selecting news");
-    kernel->set_app(new News(kernel));
+    kernel.request_app(AppId::NEWS);
   }
 }
 
 void Start::display_time() {
-  kernel->display.setTextColor(TFT_WHITE, TFT_BLACK, true);
-  struct tm current_time = kernel->_clock->get_time();
-  kernel->display.setTextDatum(MC_DATUM);
-  kernel->loadBigFont();
-  print_time(current_time, &(kernel->display), screen_width/2, screen_height/2 - 10);
+  kernel.display.setTextColor(TFT_WHITE, TFT_BLACK, true);
+  struct tm current_time = kernel._clock.get_time();
+  kernel.display.setTextDatum(MC_DATUM);
+  kernel.loadBigFont();
+  print_time(current_time, &(kernel.display), screen_width/2, screen_height/2 - 10);
 
-  kernel->loadSmallFont();
-  kernel->display.drawString(
+  kernel.loadSmallFont();
+  kernel.display.drawString(
       format0(current_time.tm_mon + 1) + "/" + 
       format0(current_time.tm_mday) + "/" + 
       format0(current_time.tm_year%100), 
@@ -98,14 +89,14 @@ void Start::display_time() {
       screen_height/2 - 40
   ); //tm.Year starts is 0@1970, so +1970 then -2000 = -30
   
-  kernel->display.drawString(
-    std::to_string(kernel->getBatteryLevel()).c_str(),
+  kernel.display.drawString(
+    std::to_string(kernel.getBatteryLevel()).c_str(),
     screen_width/2,
     screen_height/2 + 20
   );
 
-  kernel->display.drawString(
-    std::to_string(kernel->getPodometerCount()).c_str(),
+  kernel.display.drawString(
+    std::to_string(kernel.getPodometerCount()).c_str(),
     screen_width/2,
     screen_height/2 + 40
   );
@@ -113,16 +104,22 @@ void Start::display_time() {
 
 void Start::displayApps() {
   //Pong
-  this->pong->pushSprite(app_rects[0][0].x, app_rects[0][0].y);
+  if(this->pong) {
+    this->pong->pushSprite(app_rects[0][0].x, app_rects[0][0].y);
+  }
 
   //Snake
-  this->snake->pushSprite(app_rects[0][1].x, app_rects[0][1].y);
+  if(this->snake) {
+    this->snake->pushSprite(app_rects[0][1].x, app_rects[0][1].y);
+  }
 
-  this->news->pushSprite(app_rects[0][2].x, app_rects[0][2].y);
+  if(this->news) {
+    this->news->pushSprite(app_rects[0][2].x, app_rects[0][2].y);
+  }
 
   for(int i = 0; i < ROWS; i++) {
     for(int j = 0; j < COLS; j++) {
-      kernel->display.drawRoundRect(
+      kernel.display.drawRoundRect(
         app_rects[i][j].x - OUTLINE_APP_DIF, 
         app_rects[i][j].y - OUTLINE_APP_DIF, 
         app_rects[i][j].width, 

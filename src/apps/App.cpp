@@ -2,9 +2,7 @@
 #include "src/kernel/Kernel.h"
 
 //Define the constructor
-App::App(Kernel* kernel) {
-  
-};
+App::App(Kernel& kernel) : kernel(kernel) {}
 
 void App::_setup_sprites() {
   // Nothing to do. Only implement this function if you have some sprites.
@@ -20,28 +18,18 @@ void App::_setup_sprites() {
 //   spr->pushImage(0, 0, width, height, bitmap);
 // }
 //
- void make_sprite(TFT_eSprite*& spr, TFT_eSPI* tft, int width, int height, const uint16_t bitmap[])
+ std::unique_ptr<TFT_eSprite> make_sprite(TFT_eSPI* tft, int width, int height, const uint16_t bitmap[])
 {
-  if (spr) return;
-
-  spr = new (std::nothrow) TFT_eSprite(tft);
-  if (!spr) {
-    Serial.println("new TFT_eSprite failed");
-    return;
-  }
-
+  auto spr = std::make_unique<TFT_eSprite>(tft);
   spr->setSwapBytes(true);
   spr->setColorDepth(16);
 
-  spr->createSprite(width, height);
-
-  // Critical: verify the framebuffer exists
-  if (spr->getPointer() == nullptr) {
+  // Critical: verify the framebuffer was allocated (createSprite returns nullptr on failure)
+  if (spr->createSprite(width, height) == nullptr) {
     Serial.println("createSprite failed (no framebuffer)");
-    delete spr;
-    spr = nullptr;
-    return;
+    return nullptr; // unique_ptr destroys the sprite (and anything it allocated)
   }
 
   spr->pushImage(0, 0, width, height, bitmap);
+  return spr;
 }

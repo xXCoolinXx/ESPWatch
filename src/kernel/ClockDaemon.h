@@ -7,8 +7,6 @@
 // #include <TimeAlarms.h>
 // #include <FS.h>
 // #include <LittleFS.h>
-#include <ArduinoJson.h>
-#include <bits/stdc++.h>
 // #include <RTClib.h>
 
 #define NUM_ALARMS 3

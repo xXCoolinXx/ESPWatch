@@ -3,6 +3,7 @@
 #include "src/apps/App.h"
 #include "src/utils/Shapes.h"
 #include <TFT_eSPI.h>
+#include <memory>
 
 const int APP_DIM = 18;
 const int OUTLINE_DIM = APP_DIM + 2;
@@ -16,7 +17,6 @@ class Start : public App {
   private: 
     // RectDouble Cursor;
     // RectDouble lastCursor;
-    Kernel* kernel;
     double last_x = -10.0;
     double last_y = -10.0;
     bool showTime = true;
@@ -24,15 +24,14 @@ class Start : public App {
     RectInt app_rects[ROWS][COLS];
     void _setup_sprites();
 
-    // Apps
-    TFT_eSprite* pong = nullptr;
-    TFT_eSprite* snake = nullptr;
-    TFT_eSprite* news = nullptr;
+    // Apps (unique_ptr owns the sprite memory - no manual delete needed)
+    std::unique_ptr<TFT_eSprite> pong = nullptr;
+    std::unique_ptr<TFT_eSprite> snake = nullptr;
+    std::unique_ptr<TFT_eSprite> news = nullptr;
 
     // TFT_eSprite* cursor = nullptr;
   public:
-  Start(Kernel* kernel);
-  ~Start();
+  Start(Kernel& kernel);
   void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
   String get_name();
   

@@ -33,7 +33,7 @@ String getNewsArticle(short idx=1) {
     String title = doc["response"]["results"][0]["webTitle"];
     String content = doc["response"]["results"][0]["blocks"]["body"][0]["bodyTextSummary"];
     http.end();
-    return  (title + ": " + content).substring(0, 1.5 * 1024);
+    return  (title + ": " + content).substring(0, 1536); // Cap at 1.5 KB
   } else {
     Serial.println("Failed to read URL");
     http.end();
@@ -86,15 +86,18 @@ String bartSummarize(String& news) {
   }
 }
 
-News::News(Kernel* kernel) : App(kernel) {
-  this->kernel = kernel;
-  // this->kernel->display.setTextColor(TFT_WHITE, TFT_BLACK, true);
+News::News(Kernel& kernel) : App(kernel) {
+  // this->kernel.display.setTextColor(TFT_WHITE, TFT_BLACK, true);
   
   // Create display sprite
-  this->kernel->display.unloadFont();
-  this->news_sprite = new TFT_eSprite(&(this->kernel->display));
+  this->kernel.display.unloadFont();
+  this->news_sprite = std::make_unique<TFT_eSprite>(&(this->kernel.display));
   this->news_sprite->setColorDepth(1);
-  this->news_sprite->createSprite(viewbox_wh, viewbox_wh);
+  if(this->news_sprite->createSprite(viewbox_wh, viewbox_wh) == nullptr) {
+    Serial.println("News sprite creation failed");
+    this->news_sprite.reset();
+    return;
+  }
   this->news_sprite->setTextSize(1);
   this->news_sprite->setTextFont(1); //
   this->news_sprite->setTextColor(TFT_WHITE, TFT_BLACK, true);
@@ -125,7 +128,9 @@ void News::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) 
   if(this->news_summary == "") {
     this->updateNews();
   }
-  this->news_sprite->pushSprite(left_vb, top_vb);
+  if(this->news_sprite) {
+    this->news_sprite->pushSprite(left_vb, top_vb);
+  }
 }
 
 String News::get_name() {
@@ -133,7 +138,12 @@ String News::get_name() {
 }
 
 void News::updateNews() {
-  this->kernel->clearViewBox();
+  if(!this->news_sprite) {
+    Serial.println("News sprite unavailable, skipping update");
+    return;
+  }
+
+  this->kernel.clearViewBox();
   this->news_sprite->fillSprite(TFT_BLACK);
   this->news_sprite->setCursor(0, 0);
   this->news_sprite->print("Loading...");
@@ -147,12 +157,8 @@ void News::updateNews() {
   Serial.printf("Heap: %u\n", ESP.getFreeHeap());
   Serial.println(this->news_summary);
 
-  this->kernel->clearViewBox();
+  this->kernel.clearViewBox();
   this->news_sprite->fillSprite(TFT_BLACK);
   this->news_sprite->setCursor(0, 0);
   this->news_sprite->print(news_summary);
-}
-
-News::~News() {
-  delete this->news_sprite;
 }

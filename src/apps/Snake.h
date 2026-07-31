@@ -3,6 +3,7 @@
 #include "src/apps/App.h"
 #include "src/utils/Shapes.h"
 #include "src/config/GFXConstants.h"
+#include <deque>
 
 class Kernel;
 
@@ -15,20 +16,19 @@ const unsigned short snake_dim = 5; // Given current viewbox_wh, this gives a 25
 const double spm = 1.5; // Seconds per move (0.5 -> move twice in one second)
 const int border_space = 1; // Spacing between apple and border when generating 
 
-// Linkeduhlist
+// Snake body segment. Stored in a std::deque (front = head, back = tail),
+// so no manual memory management is needed.
 struct SnakePart {
   RectInt part = RectInt{center_x - center_x%snake_dim - snake_dim, center_y - center_y%snake_dim - snake_dim, snake_dim, snake_dim};
   SnakeDir dir = SNAKE_NONE;
-  SnakePart* next = nullptr;
 
-  SnakePart(const RectInt& p = RectInt{center_x - center_x%snake_dim - snake_dim, center_y - center_y%snake_dim - snake_dim, snake_dim, snake_dim}, SnakeDir d = SNAKE_NONE, SnakePart* n = nullptr)
-  : part(p), dir(d), next(n) {}
+  SnakePart(const RectInt& p = RectInt{center_x - center_x%snake_dim - snake_dim, center_y - center_y%snake_dim - snake_dim, snake_dim, snake_dim}, SnakeDir d = SNAKE_NONE)
+  : part(p), dir(d) {}
 };
 
 class Snake : public App {
-  Kernel* kernel;
 
-  SnakePart* head = nullptr;
+  std::deque<SnakePart> body;
 
   RectInt apple = RectInt{0, 0, snake_dim, snake_dim};
 
@@ -36,8 +36,7 @@ class Snake : public App {
 
   TouchHandler::oGesture cached_gesture;
   public:
-  Snake(Kernel* kernel);
-  ~Snake();
+  Snake(Kernel& kernel);
   void run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt);
   void delete_snake();
 

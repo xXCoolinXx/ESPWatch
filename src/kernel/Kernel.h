@@ -10,12 +10,14 @@
 // #include <FS.h>
 // #include <LittleFS.h>
 #include <deque>
+#include <memory>
 #include "src/config/Secrets.h"
 #include "src/assets/fonts/NotoSansBold15.h"
 #include "src/assets/fonts/NotoSansBold36.h"
 #include "src/config/GFXConstants.h"
 #include "src/config/Ports.h"
 #include "src/kernel/TouchHandler.hpp"
+#include "src/kernel/ClockDaemon.h"
 #include <SensorQMI8658.hpp>
 #include <optional>
 
@@ -24,7 +26,6 @@
 #define AA_FONT_LARGE NotoSansBold36
 
 class App;
-class ClockDaemon;
 
 const float STEP_THRESHOLD = 1.25f;  // Trigger threshold in Gs (1.0 = resting gravity)
 const float HYSTERESIS = 0.15f;       // Reset threshold band below peak
@@ -40,20 +41,36 @@ const double BATTERY_USER_RANGE = BATTERY_MAX_VOLT - BATTERY_USER_FLOOR;
 const double BATTERY_CONVERSION_FACTOR = 3.0 / 1000.0;
 // Not the displayed percentage, but percentage in the interval defined above
 
+// Apps are identified by an ID so the Kernel can switch between them
+// safely, instead of apps deleting themselves mid-run_code.
+enum class AppId {
+  NONE,
+  START,
+  PONG,
+  SNAKE,
+  NEWS
+};
+
 class Kernel {
   private:
-  App* current_app = nullptr;
+  std::unique_ptr<App> current_app = nullptr;
+  AppId current_app_id = AppId::NONE;
+  AppId pending_app = AppId::NONE;
   std::deque<long> frame_times; 
   
   void setup_display();
   void init_wifi();
   void setup_qmi();
+
+  void set_app(std::unique_ptr<App> app);
+  void apply_pending_app();
+  std::unique_ptr<App> create_app(AppId id);
   
   bool lastSpecial = false;
 
   bool clear_screen = false;
   
-  TFT_eSprite* start_sprite = nullptr;
+  std::unique_ptr<TFT_eSprite> start_sprite = nullptr;
 
   // Previous angles for analog clock hands
   double prev_a_hour = -1.0;
@@ -69,16 +86,17 @@ class Kernel {
   std::optional<double> battery_volts;
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
-  ClockDaemon* _clock = nullptr;
+  ClockDaemon _clock;
   TouchHandler::Handler touch;
   SensorQMI8658 qmi;  
 
   Kernel();
+  ~Kernel();
   
   void setupf();
   void loopf();
   float get_fps(); 
-  void set_app(App* app);
+  void request_app(AppId id);
 
   void clearNext(); //Clear on next loop
   void clearOnce(); //Check if screen is supposed to be cleared 

@@ -2,14 +2,12 @@
 #include "src/kernel/Kernel.h"
 #include "src/utils/MyPrint.h"
 
-Pong::Pong(Kernel* kernel) : App(kernel) {
+Pong::Pong(Kernel& kernel) : App(kernel) {
   reset_ball();  
-  this->kernel = kernel;
 
-
-  kernel->display.setTextColor(TFT_WHITE, TFT_BLACK, true);
-  kernel->display.setTextDatum(MC_DATUM);
-  kernel->loadSmallFont();
+  kernel.display.setTextColor(TFT_WHITE, TFT_BLACK, true);
+  kernel.display.setTextDatum(MC_DATUM);
+  kernel.loadSmallFont();
 }
 
 String Pong::get_name() {
@@ -25,39 +23,39 @@ short randPlusOrMinus() {
 }
 
 void Pong::run_code(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
-  kernel->drawViewBox();
+  kernel.drawViewBox();
 
   RectDouble user_last = user_move(pt);
   RectDouble comp_last = comp_move();
   RectDouble ball_last = ball_move();
 
-  kernel->display.fillRect(comp_last.x, comp_last.y, comp_last.width, comp_last.height, BLACK);
-  kernel->display.fillRect(comp_pad .x, comp_pad .y, comp_pad .width, comp_pad .height, WHITE);
+  kernel.display.fillRect(comp_last.x, comp_last.y, comp_last.width, comp_last.height, BLACK);
+  kernel.display.fillRect(comp_pad .x, comp_pad .y, comp_pad .width, comp_pad .height, WHITE);
 
-  kernel->display.fillRect(user_last.x, user_last.y, user_last.width, user_last.height, BLACK);
-  kernel->display.fillRect(user_pad .x, user_pad .y, user_pad .width, user_pad .height, WHITE);
+  kernel.display.fillRect(user_last.x, user_last.y, user_last.width, user_last.height, BLACK);
+  kernel.display.fillRect(user_pad .x, user_pad .y, user_pad .width, user_pad .height, WHITE);
 
-  kernel->display.fillCircle(ball_last.x + BALL_DIAMETER/2.0, ball_last.y + BALL_DIAMETER/2.0, BALL_DIAMETER/2, BLACK);
-  kernel->display.fillCircle(ball     .x + BALL_DIAMETER/2.0, ball     .y + BALL_DIAMETER/2.0, BALL_DIAMETER/2, WHITE);
+  kernel.display.fillCircle(ball_last.x + BALL_DIAMETER/2.0, ball_last.y + BALL_DIAMETER/2.0, BALL_DIAMETER/2, BLACK);
+  kernel.display.fillCircle(ball     .x + BALL_DIAMETER/2.0, ball     .y + BALL_DIAMETER/2.0, BALL_DIAMETER/2, WHITE);
 
-  kernel->display.fillRect((screen_width - 2) / 2, top_vb, 2, viewbox_wh, WHITE); //Center line
+  kernel.display.fillRect((screen_width - 2) / 2, top_vb, 2, viewbox_wh, WHITE); //Center line
   
   this->printScores();
 }
 
 void Pong::printScores() {
-  kernel->display.setTextColor(TFT_RED, TFT_BLACK, true);
-  kernel->display.drawString(format0(this->comp_score).c_str(), center_x - viewbox_wh / 4, top_vb + SCORE_Y);
+  kernel.display.setTextColor(TFT_RED, TFT_BLACK, true);
+  kernel.display.drawString(format0(this->comp_score).c_str(), center_x - viewbox_wh / 4, top_vb + SCORE_Y);
 
-  // kernel->display.setCursor(USER_SCORE_X, SCORE_Y);
-  kernel->display.setTextColor(TFT_BLUE, TFT_BLACK, true);
-  kernel->display.drawString(format0(this->user_score).c_str(), center_x + viewbox_wh / 4, top_vb + SCORE_Y);
+  // kernel.display.setCursor(USER_SCORE_X, SCORE_Y);
+  kernel.display.setTextColor(TFT_BLUE, TFT_BLACK, true);
+  kernel.display.drawString(format0(this->user_score).c_str(), center_x + viewbox_wh / 4, top_vb + SCORE_Y);
 }
 
 RectDouble Pong::user_move(const oPointInt& pt) {
   RectDouble last = user_pad;
   
-  // double fps_ratio = 80.00 / kernel->get_fps(); 
+  // double fps_ratio = 80.00 / kernel.get_fps(); 
   // user_pad.y = min(, max(, ));
   
   if(pt.has_value())
@@ -77,9 +75,9 @@ RectDouble Pong::comp_move() {
 
   double dif = (ball.y - ball.height / 2) - (comp_pad.y - comp_pad.height / 2);
   double mov = comp_speed * abs(dif) / dif;
-  double fps_ratio = 80.00 / kernel->get_fps(); 
+  double fps_ratio = 80.00 / kernel.get_fps(); 
 
-  // comp_pad.y = min(double(kernel->display.height() - comp_pad.height), max(0.00, comp_pad.y + fps_ratio * mov));
+  // comp_pad.y = min(double(kernel.display.height() - comp_pad.height), max(0.00, comp_pad.y + fps_ratio * mov));
 
   comp_pad.y = constrain(comp_pad.y + fps_ratio * mov, double(top_vb), double(bottom_vb - comp_pad.height));
 
@@ -90,7 +88,7 @@ RectDouble Pong::comp_move() {
 RectDouble Pong::ball_move() {
   RectDouble last = ball;
   
-  double fps_ratio = 80.00 / kernel->get_fps(); 
+  double fps_ratio = 80.00 / kernel.get_fps(); 
   
   //Move forward
   ball.x += ball_speed * fps_ratio * cos(ball_angle);

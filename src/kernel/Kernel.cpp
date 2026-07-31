@@ -1,6 +1,9 @@
 #include "src/kernel/Kernel.h"
 #include "src/config/Ports.h"
 #include "src/apps/Start.h"
+#include "src/apps/Pong.h"
+#include "src/apps/Snake.h"
+#include "src/apps/News.h"
 #include "src/kernel/ClockDaemon.h"
 #include "src/utils/MyPrint.h"
 #include "src/assets/Images.h"
@@ -86,6 +89,10 @@ void Kernel::loop_podometer() {
 Kernel::Kernel() : display(TFT_eSPI()) {
 }
 
+// Defined here (not inline in the header) so std::unique_ptr<App> can be
+// destroyed where App is a complete type.
+Kernel::~Kernel() = default;
+
 void Kernel::setup_display() {
   display.begin(); 
   display.setTextSize(1);
@@ -95,11 +102,13 @@ void Kernel::setup_display() {
   display.fillScreen(WHITE); 
   // display.drawBitmap(24, 8, arduino, 48, 48);
 
-  make_sprite(this->start_sprite, &(this->display), 48, 48, arduino);
+  this->start_sprite = make_sprite(&(this->display), 48, 48, arduino);
 
-  int x = (screen_width - this->start_sprite->width()) / 2;
-  int y = (screen_height - this->start_sprite->height()) / 2;
-  this->start_sprite->pushSprite(x, y);
+  if(this->start_sprite) {
+    int x = (screen_width - this->start_sprite->width()) / 2;
+    int y = (screen_height - this->start_sprite->height()) / 2;
+    this->start_sprite->pushSprite(x, y);
+  }
 }
 
 void Kernel::setupf() {
@@ -116,12 +125,12 @@ void Kernel::setupf() {
   // pinMode(SW, INPUT_PULLUP);
   // pinMode(boggle, INPUT_PULLUP);
 
-  set_app(new Start(this));
+  set_app(create_app(AppId::START));
+  current_app_id = AppId::START;
 
-  _clock = new ClockDaemon;
-  _clock->setupf();
+  _clock.setupf();
 
-  randomSeed(_clock->get_timet());
+  randomSeed(_clock.get_timet());
 
   // this->loadBigFont();
   // this->loadSmallFont();
@@ -133,7 +142,7 @@ void Kernel::setupf() {
 void Kernel::loopf() {
   long t_0 = millis();
   
-  this->_clock->loopf();
+  this->_clock.loopf();
   this->loop_podometer();
   this->checkBattery();
 
@@ -149,7 +158,7 @@ void Kernel::loopf() {
   auto [gesture, current_point] = this->touch.getTouchData();
   
   if(gesture.has_value() && gesture.value() == TouchHandler::Gesture::DOWN_SLASH) {
-    set_app(new Start(this));
+    request_app(AppId::START);
   }
   //
   // if(gesture) {
@@ -180,6 +189,7 @@ void Kernel::loopf() {
   // }
   
   current_app->run_code(gesture, current_point);
+  apply_pending_app();
 
   #ifdef DEBUG
   display.setCursor(0, display.height() - 7);
@@ -203,13 +213,40 @@ float Kernel::get_fps() {
   return 1000 * frame_count / (sum + 0.00);
 }
 
-void Kernel::set_app(App* app) {
-  if(current_app) {
-    delete current_app;
-  }
-  current_app = app;
-  // Serial.println((int)app);
+void Kernel::set_app(std::unique_ptr<App> app) {
+  // Replacing current_app destroys the previous app (smart pointer cleanup)
+  current_app = std::move(app);
   clearNext();
+}
+
+void Kernel::request_app(AppId id) {
+  if(id != AppId::NONE) {
+    pending_app = id;
+  }
+}
+
+std::unique_ptr<App> Kernel::create_app(AppId id) {
+  switch (id) {
+    case AppId::PONG:  return std::make_unique<Pong>(*this);
+    case AppId::SNAKE: return std::make_unique<Snake>(*this);
+    case AppId::NEWS:  return std::make_unique<News>(*this);
+    case AppId::START:
+    default:           return std::make_unique<Start>(*this);
+  }
+}
+
+// App switches happen here, AFTER the current app's run_code has returned.
+// Apps must never delete themselves mid-run_code (that was a use-after-free).
+void Kernel::apply_pending_app() {
+  if(pending_app == AppId::NONE || pending_app == current_app_id) {
+    pending_app = AppId::NONE;
+    return;
+  }
+
+  AppId id = pending_app;
+  pending_app = AppId::NONE;
+  set_app(create_app(id));
+  current_app_id = id;
 }
 
 void Kernel::clearNext() {
@@ -255,7 +292,7 @@ void Kernel::drawAnalog() {
   }
 
   // drawWedgeLine(float ax, float ay, float bx, float by, float aw, float bw, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF)
-  auto tm  = this->_clock->get_time();
+  auto tm  = this->_clock.get_time();
 
   double a_hour = theta_major(tm.tm_hour%12 + tm.tm_min / 60.0);
   double a_min = theta_minor(tm.tm_min + tm.tm_sec/60.0);
