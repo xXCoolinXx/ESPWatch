@@ -79,8 +79,8 @@ in
   # https://devenv.sh/basics/
   enterShell = ''
     copy_user_setup
-    newgrp uucp
-    newgrp dialout
+    # newgrp uucp
+    # newgrp dialout
     git --version # Use packages
   '';
 

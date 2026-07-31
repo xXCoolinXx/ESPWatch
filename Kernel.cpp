@@ -284,7 +284,9 @@ void Kernel::drawViewBox(uint16_t border) {
 }
 
 void Kernel::checkBattery() {
-  double new_volts = analogReadMilliVolts(BAT_ADC_PIN) * 3.3f / (1 << 12) * 3;
+  // double new_volts = analogReadMilliVolts(BAT_ADC_PIN) * 3.3f / (1 << 12) * 3;
+
+  double new_volts = analogReadMilliVolts(BAT_ADC_PIN) * BATTERY_CONVERSION_FACTOR;
 
   // Handle optional-ness
   if(!battery_volts.has_value()) {

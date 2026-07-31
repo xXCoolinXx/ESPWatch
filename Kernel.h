@@ -30,12 +30,13 @@ const float HYSTERESIS = 0.15f;       // Reset threshold band below peak
 const float ALPHA = 0.25f;            // Low-pass filter factor (smooths noise)
 const unsigned long MIN_STEP_MS = 280;
 
-const double BATTERY_MIN_VOLT = 3.30;
-const double BATTERY_MAX_VOLT = 2.45;
+const double BATTERY_MAX_VOLT = 4.20;
+const double BATTERY_MIN_VOLT = 3.0;
 const float SLEEP_WHEN_BATTERY_INTERNAL_PCT = 0.20; 
-const double BATTERY_VOLTS_EMA_ALPHA = 0.1;
+const double BATTERY_VOLTS_EMA_ALPHA = 0.05;
 const double BATTERY_USER_FLOOR = SLEEP_WHEN_BATTERY_INTERNAL_PCT * (BATTERY_MAX_VOLT - BATTERY_MIN_VOLT) + BATTERY_MIN_VOLT;
 const double BATTERY_USER_RANGE = BATTERY_MAX_VOLT - BATTERY_USER_FLOOR;
+const double BATTERY_CONVERSION_FACTOR = 3.0 / 1000.0;
 // Not the displayed percentage, but percentage in the interval defined above
 
 class Kernel {
