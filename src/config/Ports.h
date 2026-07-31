@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PORTS_H
+#define PORTS_H
 //Pins for the program
 
 //Display
@@ -25,3 +26,4 @@ const int TP_INT = 5;
 const int TP_RST = 13;
 
 const int BAT_ADC_PIN = 1;
+#endif // PORTS_H

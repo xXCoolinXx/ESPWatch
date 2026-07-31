@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MY_PRINT_H
+#define MY_PRINT_H
 #include <TFT_eSPI.h>
 #include <SPI.h>
 // #include <TimeLib.h>
@@ -17,3 +18,4 @@ void print_time(struct tm current_time, TFT_eSPI* display, int x, int y);
 void clear_chars(short x, short y, short num_chars, TFT_eSPI* display);
 
 String format0(short number);
+#endif // MY_PRINT_H

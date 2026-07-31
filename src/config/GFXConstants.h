@@ -1,5 +1,6 @@
-#pragma once
-#include "Shapes.h"
+#ifndef GFX_CONSTANTS_H
+#define GFX_CONSTANTS_H
+#include "src/utils/Shapes.h"
 
 const unsigned short screen_width = 240;
 const unsigned short screen_height = 240;
@@ -18,3 +19,4 @@ const unsigned short right_vb = (screen_width + viewbox_wh) / 2;
 const unsigned short top_vb = (screen_height - viewbox_wh) / 2;
 const unsigned short bottom_vb = (screen_height + viewbox_wh) / 2;
 const RectInt viewbox_rect = RectInt(left_vb, top_vb, viewbox_wh, viewbox_wh);
+#endif // GFX_CONSTANTS_H

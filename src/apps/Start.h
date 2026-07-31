@@ -1,6 +1,7 @@
-#pragma once
-#include "App.h"
-#include "Shapes.h"
+#ifndef START_H
+#define START_H
+#include "src/apps/App.h"
+#include "src/utils/Shapes.h"
 #include <TFT_eSPI.h>
 
 const int APP_DIM = 18;
@@ -41,3 +42,4 @@ class Start : public App {
   
   void checkPress(const PointInt& pt);
 };
+#endif // START_H

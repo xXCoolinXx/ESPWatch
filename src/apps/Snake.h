@@ -1,6 +1,8 @@
-#include "App.h"
-#include "Shapes.h"
-#include "GFXConstants.h"
+#ifndef SNAKE_H
+#define SNAKE_H
+#include "src/apps/App.h"
+#include "src/utils/Shapes.h"
+#include "src/config/GFXConstants.h"
 
 class Kernel;
 
@@ -45,3 +47,4 @@ class Snake : public App {
 
   String get_name();
 };
+#endif // SNAKE_H

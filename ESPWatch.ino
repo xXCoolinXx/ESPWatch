@@ -1,8 +1,8 @@
 // #include "Joystick.h"
-#include "Color.h"
-#include "Ports.h"
-#include "Kernel.h"
-#include "Start.h"
+#include "src/utils/Color.h"
+#include "src/config/Ports.h"
+#include "src/kernel/Kernel.h"
+#include "src/apps/Start.h"
 
 Kernel kernel;
 

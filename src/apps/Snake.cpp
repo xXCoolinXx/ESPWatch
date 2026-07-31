@@ -1,5 +1,5 @@
-#include "Snake.h"
-#include "Kernel.h"
+#include "src/apps/Snake.h"
+#include "src/kernel/Kernel.h"
 
 SnakeDir Snake::getDirFromTouch(const TouchHandler::oGesture& gesture, const oPointInt& pt) {
   if(gesture.has_value()) {

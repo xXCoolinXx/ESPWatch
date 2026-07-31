@@ -1,10 +1,11 @@
-#pragma once
-#include "Color.h"
+#ifndef APP_H
+#define APP_H
+#include "src/utils/Color.h"
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>
 //#include "Kernel.h"
-#include "TouchHandler.hpp"
+#include "src/kernel/TouchHandler.hpp"
 class Kernel;
 
 //Common framework for apps so that Kernel can call them easily
@@ -49,3 +50,4 @@ String newApp::get_name() {
   return String("newApp");
 }
 */
+#endif // APP_H

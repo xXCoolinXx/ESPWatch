@@ -1,6 +1,6 @@
-#include "TouchHandler.hpp"
+#include "src/kernel/TouchHandler.hpp"
 #include <algorithm>
-#include "GFXConstants.h"
+#include "src/config/GFXConstants.h"
 
 namespace TouchHandler {
   bool swipe_helper(double rads, double axis_rads) {

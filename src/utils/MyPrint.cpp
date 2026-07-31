@@ -1,5 +1,5 @@
-#include "MyPrint.h"
-#include "Color.h"
+#include "src/utils/MyPrint.h"
+#include "src/utils/Color.h"
 
 void print2(short number, TFT_eSPI* display) {
   //If it is less than 10, print a 0

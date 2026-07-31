@@ -1,12 +1,12 @@
-#include "Start.h"
-#include "Kernel.h"
-#include "ClockDaemon.h"
-#include "MyPrint.h"
+#include "src/apps/Start.h"
+#include "src/kernel/Kernel.h"
+#include "src/kernel/ClockDaemon.h"
+#include "src/utils/MyPrint.h"
 // #include "Clock.h"
-#include "Images.h"
-#include "Pong.h"
-#include "Snake.h"
-#include "News.h"
+#include "src/assets/Images.h"
+#include "src/apps/Pong.h"
+#include "src/apps/Snake.h"
+#include "src/apps/News.h"
 #include <cmath>
 
 //smaller windows like cursor

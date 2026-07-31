@@ -1,5 +1,5 @@
-#include "App.h"
-#include "Kernel.h"
+#include "src/apps/App.h"
+#include "src/kernel/Kernel.h"
 
 //Define the constructor
 App::App(Kernel* kernel) {

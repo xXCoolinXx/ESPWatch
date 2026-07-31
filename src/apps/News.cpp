@@ -1,7 +1,7 @@
-#include "News.h"
-#include "Kernel.h"
-#include "Secrets.h"
-#include "GFXConstants.h"
+#include "src/apps/News.h"
+#include "src/kernel/Kernel.h"
+#include "src/config/Secrets.h"
+#include "src/config/GFXConstants.h"
 #include <HTTPClient.h>
 #include "ArduinoJson.h"
 

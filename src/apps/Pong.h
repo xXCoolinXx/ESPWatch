@@ -1,6 +1,8 @@
-#include "App.h"
-#include "Shapes.h"
-#include "GFXConstants.h"
+#ifndef PONG_H
+#define PONG_H
+#include "src/apps/App.h"
+#include "src/utils/Shapes.h"
+#include "src/config/GFXConstants.h"
 
 #define PAD_WIDTH      2
 #define PAD_HEIGHT    15
@@ -39,3 +41,4 @@ class Pong : public App {
     
     void printScores();
 };
+#endif // PONG_H

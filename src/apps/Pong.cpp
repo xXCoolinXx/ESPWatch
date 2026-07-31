@@ -1,6 +1,6 @@
-#include "Pong.h"
-#include "Kernel.h"
-#include "MyPrint.h"
+#include "src/apps/Pong.h"
+#include "src/kernel/Kernel.h"
+#include "src/utils/MyPrint.h"
 
 Pong::Pong(Kernel* kernel) : App(kernel) {
   reset_ball();  

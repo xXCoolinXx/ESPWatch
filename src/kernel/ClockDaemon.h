@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLOCK_DAEMON_H
+#define CLOCK_DAEMON_H
 #include <WiFi.h> // for WiFi shield
 
 // #include <TimeLib.h>
@@ -53,3 +54,4 @@ class ClockDaemon {
     bool stopwatchIsRunning();
     struct tm getStopwatchTime();
 };
+#endif // CLOCK_DAEMON_H

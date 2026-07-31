@@ -1,12 +1,12 @@
-#include "Kernel.h"
-#include "Ports.h"
-#include "Start.h"
-#include "ClockDaemon.h"
-#include "MyPrint.h"
-#include "Images.h"
+#include "src/kernel/Kernel.h"
+#include "src/config/Ports.h"
+#include "src/apps/Start.h"
+#include "src/kernel/ClockDaemon.h"
+#include "src/utils/MyPrint.h"
+#include "src/assets/Images.h"
 #include <numeric>
 #include <Wire.h>
-#include "Shapes.h"
+#include "src/utils/Shapes.h"
 
 //#define DEBUG
 

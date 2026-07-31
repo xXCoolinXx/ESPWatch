@@ -1,5 +1,5 @@
-#include "ClockDaemon.h"
-#include "Ports.h"
+#include "src/kernel/ClockDaemon.h"
+#include "src/config/Ports.h"
 #include "time.h"
 // #undef SERIAL
 

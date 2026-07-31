@@ -1,3 +1,5 @@
+#ifndef TOUCH_HANDLER_HPP
+#define TOUCH_HANDLER_HPP
 /*
  * Handles gesture tracking and management for the CST816S
  * Both driver libraries (CST816S, SensorLib->TouchDrv) fail for various reasons with gestures
@@ -5,13 +7,12 @@
  * As such, TouchHandler is necessary to do gesture tracking at the software level
  * Thank you for your attention to this matter
 */
-#pragma once
 #include <Arduino.h>
 #include <CST816S.h>
 #include <optional>
-#include <Shapes.h>
+#include "src/utils/Shapes.h"
 #include <Wire.h>
-#include "Ports.h"
+#include "src/config/Ports.h"
 
 typedef std::optional<PointInt> oPointInt;
 
@@ -64,3 +65,4 @@ namespace TouchHandler {
       std::tuple<oGesture, oPointInt> getTouchData();
   };
 }
+#endif // TOUCH_HANDLER_HPP

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KERNEL_H
+#define KERNEL_H
 //#include "App.h"
 
 #include <TFT_eSPI.h> // Graphics and font library for ST7735 driver chip
@@ -9,12 +10,12 @@
 // #include <FS.h>
 // #include <LittleFS.h>
 #include <deque>
-#include "Secrets.h"
-#include "NotoSansBold15.h"
-#include "NotoSansBold36.h"
-#include "GFXConstants.h"
-#include "Ports.h"
-#include "TouchHandler.hpp"
+#include "src/config/Secrets.h"
+#include "src/assets/fonts/NotoSansBold15.h"
+#include "src/assets/fonts/NotoSansBold36.h"
+#include "src/config/GFXConstants.h"
+#include "src/config/Ports.h"
+#include "src/kernel/TouchHandler.hpp"
 #include <SensorQMI8658.hpp>
 #include <optional>
 
@@ -101,3 +102,4 @@ class Kernel {
 
   double getDeltaTime();
 };
+#endif // KERNEL_H

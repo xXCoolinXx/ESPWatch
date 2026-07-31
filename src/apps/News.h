@@ -1,4 +1,6 @@
-#include "App.h"
+#ifndef NEWS_H
+#define NEWS_H
+#include "src/apps/App.h"
 // #include "rssRead.hpp"
 
 class Kernel;
@@ -20,3 +22,4 @@ class News : public App
   // Put it on the news scyeah
   void updateNews();
 };
+#endif // NEWS_H
