@@ -133,8 +133,9 @@ void Kernel::setupf() {
 void Kernel::loopf() {
   long t_0 = millis();
   
-  _clock->loopf();
+  this->_clock->loopf();
   this->loop_podometer();
+  this->checkBattery();
 
   clearOnce(); 
   
@@ -282,8 +283,29 @@ void Kernel::drawViewBox(uint16_t border) {
   this->display.drawRect(left_vb, top_vb, viewbox_wh, viewbox_wh, border);
 }
 
-double Kernel::getBatteryLevel() {
-  return analogReadMilliVolts(BAT_ADC_PIN) * 3.3f / (1 << 12) * 3;
+void Kernel::checkBattery() {
+  double new_volts = analogReadMilliVolts(BAT_ADC_PIN) * 3.3f / (1 << 12) * 3;
+
+  // Handle optional-ness
+  if(!battery_volts.has_value()) {
+    battery_volts = new_volts;
+  } else {
+    this->battery_volts = BATTERY_VOLTS_EMA_ALPHA * new_volts + (1 - BATTERY_VOLTS_EMA_ALPHA) * this->battery_volts.value();
+  }
+
+  if(this->battery_volts.value() < BATTERY_USER_FLOOR) {
+    // TODO: Sleep
+  }
+}
+
+int Kernel::getBatteryLevel() {
+  if(!this->battery_volts.has_value()) {
+    return 0;
+  }
+
+  return round(
+      (min(BATTERY_MAX_VOLT, this->battery_volts.value()) - BATTERY_USER_FLOOR) / BATTERY_USER_RANGE
+    * 100); 
 }
 
 int Kernel::getPodometerCount() {

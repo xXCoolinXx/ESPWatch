@@ -16,6 +16,7 @@
 #include "Ports.h"
 #include "TouchHandler.hpp"
 #include <SensorQMI8658.hpp>
+#include <optional>
 
 // The font names are arrays references, thus must NOT be in quotes ""
 #define AA_FONT_SMALL NotoSansBold15
@@ -28,6 +29,14 @@ const float STEP_THRESHOLD = 1.25f;  // Trigger threshold in Gs (1.0 = resting g
 const float HYSTERESIS = 0.15f;       // Reset threshold band below peak
 const float ALPHA = 0.25f;            // Low-pass filter factor (smooths noise)
 const unsigned long MIN_STEP_MS = 280;
+
+const double BATTERY_MIN_VOLT = 3.30;
+const double BATTERY_MAX_VOLT = 2.45;
+const float SLEEP_WHEN_BATTERY_INTERNAL_PCT = 0.20; 
+const double BATTERY_VOLTS_EMA_ALPHA = 0.1;
+const double BATTERY_USER_FLOOR = SLEEP_WHEN_BATTERY_INTERNAL_PCT * (BATTERY_MAX_VOLT - BATTERY_MIN_VOLT) + BATTERY_MIN_VOLT;
+const double BATTERY_USER_RANGE = BATTERY_MAX_VOLT - BATTERY_USER_FLOOR;
+// Not the displayed percentage, but percentage in the interval defined above
 
 class Kernel {
   private:
@@ -54,6 +63,8 @@ class Kernel {
   unsigned long stepCount = 0;
   bool peakDetected = false;
   unsigned long lastStepTime = 0;
+
+  std::optional<double> battery_volts;
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
   ClockDaemon* _clock = nullptr;
@@ -81,7 +92,9 @@ class Kernel {
 
   void drawViewBox(uint16_t border=TFT_WHITE);
 
-  double getBatteryLevel();
+  void checkBattery(); 
+  //Gives percentage level
+  int getBatteryLevel();
   int getPodometerCount();
   void loop_podometer();
 
