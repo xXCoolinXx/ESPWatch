@@ -93,13 +93,13 @@ void Start::display_time() {
     std::to_string(kernel.getBatteryLevel()).c_str(),
     screen_width/2,
     screen_height/2 + 20
-  );
+  ); // TODO : Change this to a rectangle 
 
-  kernel.display.drawString(
-    std::to_string(kernel.getPodometerCount()).c_str(),
-    screen_width/2,
-    screen_height/2 + 40
-  );
+  // kernel.display.drawString(
+  //   std::to_string(kernel.getPodometerCount()).c_str(),
+  //   screen_width/2,
+  //   screen_height/2 + 40
+  // );
 }
 
 void Start::displayApps() {

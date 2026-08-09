@@ -4,6 +4,12 @@
 // #undef SERIAL
 
 void ClockDaemon::sync() {
+  if(time(NULL) > 946684800) {
+    // Time is already set, we don't need to sync
+    // This is necessary to check when waking from deep sleep where the time was previously set
+    return;
+  }
+
   if (WiFi.status() != WL_CONNECTED) { 
     Serial.println("Getting NTP time failed - WiFi not connected.");
     return; 

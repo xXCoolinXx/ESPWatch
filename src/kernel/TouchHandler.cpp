@@ -128,5 +128,8 @@ namespace TouchHandler {
 
   void Handler::init() {
     this->_touch.begin();
+
+    // Enable wake from touch
+    esp_sleep_enable_ext0_wakeup((gpio_num_t)TP_INT, 0);
   }
 }

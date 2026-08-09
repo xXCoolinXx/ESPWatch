@@ -52,4 +52,4 @@ class ClockDaemon {
     bool stopwatchIsRunning();
     struct tm getStopwatchTime();
 };
-#endif // CLOCK_DAEMON_H
+#endif //

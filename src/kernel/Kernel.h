@@ -39,6 +39,7 @@ const double BATTERY_VOLTS_EMA_ALPHA = 0.05;
 const double BATTERY_USER_FLOOR = SLEEP_WHEN_BATTERY_INTERNAL_PCT * (BATTERY_MAX_VOLT - BATTERY_MIN_VOLT) + BATTERY_MIN_VOLT;
 const double BATTERY_USER_RANGE = BATTERY_MAX_VOLT - BATTERY_USER_FLOOR;
 const double BATTERY_CONVERSION_FACTOR = 3.0 / 1000.0;
+const unsigned long SLEEP_AFTER_MILLIS = 90000;
 // Not the displayed percentage, but percentage in the interval defined above
 
 // Apps are identified by an ID so the Kernel can switch between them
@@ -66,6 +67,8 @@ class Kernel {
   void apply_pending_app();
   std::unique_ptr<App> create_app(AppId id);
   
+  unsigned long lastTouchTime = millis();
+
   bool lastSpecial = false;
 
   bool clear_screen = false;

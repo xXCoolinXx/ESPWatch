@@ -32,6 +32,7 @@ void Kernel::init_wifi() {
   }
 }
 
+
 void Kernel::setup_qmi() {
   if(!this->qmi.begin(Wire, QMI8658_L_SLAVE_ADDRESS, TP_SDA, TP_SCL)) {
     Serial.println("Woops, accelerometer didn't start :(");
@@ -94,6 +95,8 @@ Kernel::Kernel() : display(TFT_eSPI()) {
 Kernel::~Kernel() = default;
 
 void Kernel::setup_display() {
+  gpio_hold_dis((gpio_num_t)TFT_BL); // Release from sleep cycle
+  
   display.begin(); 
   display.setTextSize(1);
   display.setRotation(1);
@@ -143,7 +146,7 @@ void Kernel::loopf() {
   long t_0 = millis();
   
   this->_clock.loopf();
-  this->loop_podometer();
+  // this->loop_podometer(); // Remove this because the podometer just isn't very useful without long term tracking, which is a pain to implement and my phone already does this
   this->checkBattery();
 
   clearOnce(); 
@@ -156,6 +159,20 @@ void Kernel::loopf() {
   display.setTextColor(WHITE);
     
   auto [gesture, current_point] = this->touch.getTouchData();
+  
+  // Check if either has a value
+  if(gesture.has_value() || current_point.has_value()) {
+    this->lastTouchTime = millis();
+  }
+
+  if( (millis() - this->lastTouchTime) > SLEEP_AFTER_MILLIS) {
+    // Disable backlight
+    digitalWrite(TFT_BL, LOW); 
+    gpio_hold_en((gpio_num_t)TFT_BL);
+    gpio_deep_sleep_hold_en(); 
+    
+    esp_deep_sleep_start();
+  }
   
   if(gesture.has_value() && gesture.value() == TouchHandler::Gesture::DOWN_SLASH) {
     request_app(AppId::START);
