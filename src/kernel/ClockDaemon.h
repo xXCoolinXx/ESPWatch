@@ -23,6 +23,8 @@ enum Add {
   UP = 1
 };
 
+class Kernel; // Define kernel class to avoid circular imports
+
 class ClockDaemon {
   private:
     struct tm stopwatch; //Only hour, minute, and second are used
@@ -30,8 +32,10 @@ class ClockDaemon {
     struct tm previous_time;
 
     bool stopwatch_running = false;
+
+    Kernel& kernel;
   public:
-    //ClockDaemon();
+    ClockDaemon(Kernel& kernel);
 
     void sync();
     void setupf();

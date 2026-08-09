@@ -9,27 +9,36 @@
 #include "src/assets/Images.h"
 #include <numeric>
 #include <Wire.h>
+#include "src/apps/App.h"
 #include "src/utils/Shapes.h"
 
 //#define DEBUG
 
-void Kernel::init_wifi() {
+bool Kernel::request_wifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD); // Define in Secrets.h
 
   Serial.print("Connecting to WiFi ..");
   int checks = 0;
-  while (WiFi.status() != WL_CONNECTED && checks < 20) {
+  while (WiFi.status() != WL_CONNECTED && checks < 10) {
     Serial.print('.');
     checks++;
-    delay(1000);
+    delay(250);
   }
 
   if(WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi failed to connect :(");
+
+    return false;
   } else { 
     Serial.println(WiFi.localIP());
+    return true;
   }
+}
+
+void Kernel::turn_off_wifi() {
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
 }
 
 
@@ -43,7 +52,7 @@ void Kernel::setup_qmi() {
   qmi.enableAccelerometer();
   
   qmi.configPedometer(
-        50,   // ped_sample_cnt: Window sample count
+        50,   // ped_sample_cnt: Window sampl, _clock(this)  count
         200,  // ped_peak2peak:  Peak-to-peak threshold
         100,  // ped_peak:       Peak detection threshold
         200,  // ped_time_up:    Max time for step up-slope (ms)
@@ -87,7 +96,8 @@ void Kernel::loop_podometer() {
     }
 }
 
-Kernel::Kernel() : display(TFT_eSPI()) {
+Kernel::Kernel() : display(TFT_eSPI()), _clock(*this) {
+  this->current_app = nullptr;
 }
 
 // Defined here (not inline in the header) so std::unique_ptr<App> can be
@@ -121,17 +131,16 @@ void Kernel::setupf() {
   
   this->setup_display();
   this->touch.init();
-  this->init_wifi();
   this->setup_qmi();
   Serial.println("Setting up display works!");
   // LittleFS.begin();  
   // pinMode(SW, INPUT_PULLUP);
   // pinMode(boggle, INPUT_PULLUP);
+  
+  _clock.setupf();
 
   set_app(create_app(AppId::START));
   current_app_id = AppId::START;
-
-  _clock.setupf();
 
   randomSeed(_clock.get_timet());
 
@@ -237,12 +246,14 @@ void Kernel::set_app(std::unique_ptr<App> app) {
 }
 
 void Kernel::request_app(AppId id) {
+  turn_off_wifi(); // Garbage collect wifi usage after a program has run
   if(id != AppId::NONE) {
     pending_app = id;
   }
 }
 
 std::unique_ptr<App> Kernel::create_app(AppId id) {
+  turn_off_wifi(); // Turn off wifi before switching apps to avoid keeping it on too long
   switch (id) {
     case AppId::PONG:  return std::make_unique<Pong>(*this);
     case AppId::SNAKE: return std::make_unique<Snake>(*this);

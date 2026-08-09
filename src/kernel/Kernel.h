@@ -53,14 +53,16 @@ enum class AppId {
 };
 
 class Kernel {
+  public:
+      ClockDaemon _clock;
+
   private:
-  std::unique_ptr<App> current_app = nullptr;
+  std::unique_ptr<App> current_app;
   AppId current_app_id = AppId::NONE;
   AppId pending_app = AppId::NONE;
   std::deque<long> frame_times; 
   
   void setup_display();
-  void init_wifi();
   void setup_qmi();
 
   void set_app(std::unique_ptr<App> app);
@@ -89,7 +91,6 @@ class Kernel {
   std::optional<double> battery_volts;
   public: 
   TFT_eSPI display; // Pins are set up in the library for some reason. Bad practice but I can't fix it
-  ClockDaemon _clock;
   TouchHandler::Handler touch;
   SensorQMI8658 qmi;  
 
@@ -100,6 +101,9 @@ class Kernel {
   void loopf();
   float get_fps(); 
   void request_app(AppId id);
+  bool request_wifi();
+  void turn_off_wifi();
+
 
   void clearNext(); //Clear on next loop
   void clearOnce(); //Check if screen is supposed to be cleared 

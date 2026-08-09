@@ -89,6 +89,7 @@ String bartSummarize(String& news) {
 News::News(Kernel& kernel) : App(kernel) {
   // this->kernel.display.setTextColor(TFT_WHITE, TFT_BLACK, true);
   
+  this->kernel.request_wifi();
   // Create display sprite
   this->kernel.display.unloadFont();
   this->news_sprite = std::make_unique<TFT_eSprite>(&(this->kernel.display));

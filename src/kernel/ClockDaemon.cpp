@@ -1,26 +1,35 @@
 #include "src/kernel/ClockDaemon.h"
 #include "src/config/Ports.h"
 #include "time.h"
+#include "Kernel.h"
 // #undef SERIAL
 
+ClockDaemon::ClockDaemon(Kernel& kernel) : kernel(kernel) {
+
+}
+
 void ClockDaemon::sync() {
+  // call regardless to set time zone - don't need wifi
+  configTzTime(time_zone, ntpServer1, ntpServer2);
+
+
   if(time(NULL) > 946684800) {
     // Time is already set, we don't need to sync
     // This is necessary to check when waking from deep sleep where the time was previously set
     return;
   }
-
-  if (WiFi.status() != WL_CONNECTED) { 
-    Serial.println("Getting NTP time failed - WiFi not connected.");
-    return; 
-  }
   
-  configTzTime(time_zone, ntpServer1, ntpServer2);
-
-  if(!getLocalTime(&this->current_time)) {
+  struct tm timeinfo;
+  if(this->kernel.request_wifi()) {
+    Serial.println("WiFi for NTP!");
+    if(getLocalTime(&timeinfo, 5000)) {
+      Serial.println("Time succesfully synced!");
+    } else {
+      Serial.println("Time failed to sync... oops");
+    }
+  } else { 
     Serial.println("Getting time failed - :(");
-    return;
-  } 
+  }
 }
 
 void ClockDaemon::setupf() {
