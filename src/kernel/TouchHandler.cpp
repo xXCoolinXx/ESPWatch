@@ -125,11 +125,15 @@ namespace TouchHandler {
     this->last_touch_time = millis();
   }
 
+  bool Handler::available() {
+    return this->_touch.available(); 
+  }
 
   void Handler::init() {
-    this->_touch.begin();
-
+    this->_touch.begin(); 
+ 
     // Enable wake from touch
-    esp_sleep_enable_ext0_wakeup((gpio_num_t)TP_INT, 0);
+    // gpio_wakeup_enable((gpio_num_t)TP_INT, GPIO_INTR_LOW_LEVEL);
+    // esp_sleep_enable_ext0_wakeup((gpio_num_t)TP_INT, 0);
   }
 }

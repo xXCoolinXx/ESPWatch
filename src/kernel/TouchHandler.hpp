@@ -61,6 +61,8 @@ namespace TouchHandler {
       void resetPoints();
       void setPoints(PointInt new_point);
       void setCurrentPoint(PointInt new_point);
+
+      bool available();
       
       std::tuple<oGesture, oPointInt> getTouchData();
   };

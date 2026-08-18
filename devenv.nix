@@ -53,8 +53,7 @@ in
     compile-sketch.exec = ''
       echo "🔨 Compiling for ESP32-S3..."
       arduino-cli compile \
-        --build-path ${buildDir} \
-        --clean
+        --build-path ${buildDir}
       cp .devenv/build/compile_commands.json ./compile_commands.json
     '';
 

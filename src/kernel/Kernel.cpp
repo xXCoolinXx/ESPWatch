@@ -11,8 +11,51 @@
 #include <Wire.h>
 #include "src/apps/App.h"
 #include "src/utils/Shapes.h"
+#include "Battery.hpp"
 
 //#define DEBUG
+
+void Kernel::handle_sleep() {
+  if( (millis() - this->lastTouchTime) > SLEEP_AFTER_MILLIS) {
+    // Disable backlight
+    digitalWrite(TFT_BL, LOW); 
+    gpio_hold_en((gpio_num_t)TFT_BL);
+    
+    // pinMode(TP_INT, INPUT_PULLUP);
+    // esp_sleep_enable_ext0_wakeup((gpio_num_t)TP_INT, 0);
+    // // gpio_wakeup_enable((gpio_num_t)TP_INT, GPIO_INTR_LOW_LEVEL);
+    // esp_sleep_enable_gpio_wakeup();
+    
+    Serial.println("Attempting to enter sleep");
+    Serial.flush();
+    while (this->touch.available()) {
+      delay(10);
+    }
+
+    gpio_wakeup_enable((gpio_num_t)TP_INT, GPIO_INTR_LOW_LEVEL);
+  
+    // 3. ENABLE GPIO WAKE FOR LIGHT SLEEP
+    // This is the critical step that tells the ESP32-S3 to honor gpio_wakeup_enable during light sleep.
+    esp_sleep_enable_gpio_wakeup();
+    
+    Serial.println("Sleeping now");
+    Serial.flush();
+    // 4. ENTER LIGHT SLEEP
+    esp_light_sleep_start();
+  
+    // --- The ESP32 wakes up here when you touch the screen ---
+  
+    // 5. DISABLE WAKE SOURCE (Optional, but good practice)
+    gpio_wakeup_disable((gpio_num_t)TP_INT);
+    
+    gpio_hold_dis((gpio_num_t)TFT_BL); // Release from sleep cycle
+    digitalWrite(TFT_BL, HIGH);
+    Serial.println("Awoke from sleep, woke af");
+    this->lastTouchTime = millis();
+    //esp_light_sleep_start();
+  
+  } 
+}
 
 bool Kernel::request_wifi() {
   WiFi.mode(WIFI_STA);
@@ -20,10 +63,10 @@ bool Kernel::request_wifi() {
 
   Serial.print("Connecting to WiFi ..");
   int checks = 0;
-  while (WiFi.status() != WL_CONNECTED && checks < 10) {
+  while (WiFi.status() != WL_CONNECTED && checks < 20) {
     Serial.print('.');
     checks++;
-    delay(250);
+    delay(5000);
   }
 
   if(WiFi.status() != WL_CONNECTED) {
@@ -126,7 +169,8 @@ void Kernel::setup_display() {
 
 void Kernel::setupf() {
   Serial.begin(115200);
-
+  
+  // esp_sleep_enable_gpio_wakeup();
   Serial.println("Reached Kernel::setupf");
   
   this->setup_display();
@@ -147,6 +191,11 @@ void Kernel::setupf() {
   // this->loadBigFont();
   // this->loadSmallFont();
   this->display.setTextColor(TFT_WHITE, TFT_BLACK);
+  
+  this->lastTouchTime = millis();
+  
+  gpio_set_direction((gpio_num_t)TP_INT, GPIO_MODE_INPUT);
+  gpio_pullup_en((gpio_num_t)TP_INT);
 
   Serial.println("Finished setup");
 }
@@ -172,47 +221,13 @@ void Kernel::loopf() {
   // Check if either has a value
   if(gesture.has_value() || current_point.has_value()) {
     this->lastTouchTime = millis();
-  }
-
-  if( (millis() - this->lastTouchTime) > SLEEP_AFTER_MILLIS) {
-    // Disable backlight
-    digitalWrite(TFT_BL, LOW); 
-    gpio_hold_en((gpio_num_t)TFT_BL);
-    gpio_deep_sleep_hold_en(); 
-    
-    esp_deep_sleep_start();
-  }
+  } 
   
+  this->handle_sleep();
+
   if(gesture.has_value() && gesture.value() == TouchHandler::Gesture::DOWN_SLASH) {
     request_app(AppId::START);
-  }
-  //
-  // if(gesture) {
-  //   switch(gesture.value()) {
-  //     case TouchHandler::Gesture::TAP:
-  //       Serial.println("Get tapped");
-  //       break;
-  //     case TouchHandler::Gesture::SWIPE_UP:
-  //       Serial.println("Swipe up");
-  //       break;
-  //     case TouchHandler::Gesture::SWIPE_DOWN:
-  //       Serial.println("Swipe down");
-  //       break;
-  //     case TouchHandler::Gesture::SWIPE_LEFT:
-  //       Serial.println("Swipe left");
-  //       break;
-  //     case TouchHandler::Gesture::SWIPE_RIGHT:
-  //       Serial.println("Swipe right");
-  //       break;
-  //     case TouchHandler::Gesture::LONG_PRESS:
-  //       Serial.println("Long press");
-  //       break;
-  //   }
-  // }
-
-  // if(current_point.has_value()) {
-  //   Serial.println("x: " + String(current_point.value().x) + " y: " + String(current_point.value().y));
-  // }
+  } 
   
   current_app->run_code(gesture, current_point);
   apply_pending_app();
@@ -224,7 +239,6 @@ void Kernel::loopf() {
   display.print(digitalRead(boggle));
   #endif
   
-  //display.fillScreen(BLACK); //REMOVE THIS LATER!
 
   this->deltaTime = millis() - t_0;
   if (frame_times.size() == frame_count) {
@@ -369,10 +383,12 @@ int Kernel::getBatteryLevel() {
   if(!this->battery_volts.has_value()) {
     return 0;
   }
+  
+  return stateOfChargePercent(this->battery_volts.value()); 
 
-  return round(
-      (min(BATTERY_MAX_VOLT, this->battery_volts.value()) - BATTERY_USER_FLOOR) / BATTERY_USER_RANGE
-    * 100); 
+  // return round(
+  //     (min(BATTERY_MAX_VOLT, this->battery_volts.value()) - BATTERY_USER_FLOOR) / BATTERY_USER_RANGE
+  //   * 100); 
 }
 
 int Kernel::getPodometerCount() {
